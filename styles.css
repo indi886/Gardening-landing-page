@@ -348,7 +348,7 @@ em { font-style: normal; color: var(--accent); }
 .stats__grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
 .stat { border-top: 1px solid rgba(234,243,223,0.22); padding-top: 24px; display: flex; flex-direction: column; gap: 10px; transition: transform .4s var(--ease); cursor: default; }
 .stat:hover { transform: scale(1.06) translateY(-4px); }
-.stat__num { font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 6vw, 84px); line-height: 1; letter-spacing: -0.03em; color: #fff; transition: color .3s var(--ease), transform .4s var(--ease); transform-origin: left; }
+.stat__num { font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 6vw, 84px); line-height: 1; letter-spacing: -0.03em; color: #fff; transition: color .3s var(--ease); transform-origin: left; will-change: transform; }
 .stat:hover .stat__num { color: var(--accent-soft); }
 .stat__num.is-counting { color: var(--accent-soft); }
 .stat__label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-soft); }

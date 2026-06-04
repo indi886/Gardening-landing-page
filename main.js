@@ -121,11 +121,13 @@
   }
 
   /* ---------- Animated statistics ---------- */
-  const nums = $$(".stat__num");
   const easeOut = (x) => 1 - Math.pow(1 - x, 3);
   function runCount(el) {
+    if (el.dataset.counted) return; // guard against double runs
+    el.dataset.counted = "1";
     const target = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
+    if (reduce) { el.textContent = target.toLocaleString() + suffix; return; }
     const dur = 1700;
     const start = performance.now();
     el.classList.add("is-counting");
@@ -144,21 +146,25 @@
     }
     requestAnimationFrame(tick);
   }
-  const statObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (!e.isIntersecting) return;
-        if (reduce) {
-          e.target.textContent = parseFloat(e.target.dataset.count).toLocaleString() + (e.target.dataset.suffix || "");
-        } else {
-          runCount(e.target);
-        }
-        statObserver.unobserve(e.target);
-      });
-    },
-    { threshold: 0.6 }
-  );
-  nums.forEach((n) => statObserver.observe(n));
+  // Observe the whole grid (reliable trigger) and kick off each counter once
+  // the stat has had time to fade/stagger in — so the count-up is actually
+  // visible instead of finishing behind a still-transparent block.
+  const statsGrid = $(".stats__grid");
+  if (statsGrid) {
+    const statObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          $$(".stat__num", e.target).forEach((n, i) => {
+            setTimeout(() => runCount(n), 220 + i * 140); // match stagger reveal
+          });
+          statObserver.unobserve(e.target);
+        });
+      },
+      { threshold: 0.25 }
+    );
+    statObserver.observe(statsGrid);
+  }
 
   /* ---------- Card pointer glow + subtle tilt ---------- */
   $$(".card[data-tilt]").forEach((card) => {
