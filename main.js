@@ -57,7 +57,7 @@
         const group = e.target;
         const items = $$(".stagger", group);
         items.forEach((item, i) => {
-          setTimeout(() => item.classList.add("is-in"), i * 110);
+          setTimeout(() => item.classList.add("is-in"), i * 140);
         });
         staggerObserver.unobserve(group);
       });
@@ -128,12 +128,19 @@
     const suffix = el.dataset.suffix || "";
     const dur = 1700;
     const start = performance.now();
+    el.classList.add("is-counting");
     function tick(now) {
       const p = clamp((now - start) / dur, 0, 1);
       const val = Math.round(easeOut(p) * target);
       el.textContent = val.toLocaleString() + suffix;
+      // gentle scale "pop" that settles as the count finishes
+      el.style.transform = "scale(" + (1 + 0.12 * (1 - p)) + ")";
       if (p < 1) requestAnimationFrame(tick);
-      else el.textContent = target.toLocaleString() + suffix;
+      else {
+        el.textContent = target.toLocaleString() + suffix;
+        el.style.transform = "scale(1)";
+        el.classList.remove("is-counting");
+      }
     }
     requestAnimationFrame(tick);
   }
@@ -164,7 +171,7 @@
       if (!reduce) {
         const rx = ((e.clientY - r.top) / r.height - 0.5) * -5;
         const ry = ((e.clientX - r.left) / r.width - 0.5) * 5;
-        card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+        card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px) scale(1.04)`;
       }
     });
     card.addEventListener("pointerleave", () => { card.style.transform = ""; });
