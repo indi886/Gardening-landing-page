@@ -44,7 +44,7 @@
     { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
   );
   const hero = $(".hero");
-  $$(".reveal-section, .reveal, .wipe, .slide-l, .slide-r").forEach((el) => {
+  $$(".reveal-section, .reveal, .wipe, .slide-l, .slide-r, .reveal-img").forEach((el) => {
     if (el.classList.contains("reveal") && hero && hero.contains(el)) return; // hero handled separately
     revealObserver.observe(el);
   });
@@ -205,6 +205,30 @@
       if (success) success.hidden = false;
       form.querySelectorAll("input").forEach((i) => (i.value = ""));
     });
+  }
+
+  /* ---------- Before / After slider ---------- */
+  const ba = $("#ba");
+  if (ba) {
+    const range = $(".ba__range", ba);
+    const set = (v) => ba.style.setProperty("--pos", v + "%");
+    const posFromEvent = (e) => {
+      const r = ba.getBoundingClientRect();
+      return clamp(((e.clientX - r.left) / r.width) * 100, 0, 100);
+    };
+    let dragging = false;
+    const move = (e) => { const p = posFromEvent(e); set(p); if (range) range.value = p; };
+    if (range) {
+      range.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        try { range.setPointerCapture(e.pointerId); } catch (_) {}
+        move(e);
+      });
+      range.addEventListener("pointermove", (e) => { if (dragging) move(e); });
+      range.addEventListener("pointerup", () => { dragging = false; });
+      range.addEventListener("pointercancel", () => { dragging = false; });
+      range.addEventListener("input", () => set(range.value)); // keyboard arrows
+    }
   }
 
   /* ---------- Floating spores / drifting leaves ---------- */

@@ -234,6 +234,63 @@
     </div>
   </section>
 
+  <!-- ============ OUR WORK — IMAGE GALLERY ============ -->
+  <section class="work reveal-section" id="gallery">
+    <div class="work__head">
+      <div>
+        <p class="label"><span class="label__dot"></span> 05-E. OUR WORK</p>
+        <h2 class="work__title">Inspired by nature,<br />designed <em>for you</em>.</h2>
+      </div>
+      <a href="#contact" class="btn btn--ghost">See more projects →</a>
+    </div>
+
+    <div class="work__grid">
+      <!-- Large tile: image-stack that fans on hover -->
+      <figure class="shot shot--lg reveal-img is-stack">
+        <span class="shot__layer shot__layer--b" style="background-image:url('assets/work-3.jpg'), linear-gradient(135deg,#1f5a26,#4ea83f)"></span>
+        <span class="shot__layer shot__layer--a" style="background-image:url('assets/work-2.jpg'), linear-gradient(135deg,#2f7d3a,#a7d96a)"></span>
+        <span class="shot__img" style="background-image:url('assets/work-1.jpg'), linear-gradient(135deg,#2f7d3a,#7dd66a)"></span>
+        <figcaption><span>Hillside Retreat</span><small>Full landscape design</small></figcaption>
+      </figure>
+
+      <figure class="shot reveal-img" style="--d:.08s">
+        <span class="shot__img" style="background-image:url('assets/work-4.jpg'), linear-gradient(135deg,#3a8f3a,#cfe08a)"></span>
+        <figcaption><span>Courtyard Garden</span><small>Planting &amp; stone</small></figcaption>
+      </figure>
+
+      <figure class="shot reveal-img" style="--d:.16s">
+        <span class="shot__img" style="background-image:url('assets/work-5.jpg'), linear-gradient(135deg,#1f5a26,#7dd66a)"></span>
+        <figcaption><span>Night Garden</span><small>Garden lighting</small></figcaption>
+      </figure>
+
+      <figure class="shot reveal-img" style="--d:.24s">
+        <span class="shot__img" style="background-image:url('assets/work-6.jpg'), linear-gradient(135deg,#4ea83f,#f3c969)"></span>
+        <figcaption><span>Terraced Slope</span><small>Hardscape build</small></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ BEFORE / AFTER SLIDER ============ -->
+  <section class="reveal-section" id="transform">
+    <div class="ba-wrap">
+      <div class="ba-head">
+        <p class="label"><span class="label__dot"></span> 06-F. THE TRANSFORMATION</p>
+        <h2 class="ba-title">From overgrown to <em>extraordinary</em>.</h2>
+        <p class="ba-sub">Drag the handle to reveal a real VERDANT before &amp; after.</p>
+      </div>
+
+      <div class="ba reveal-img" id="ba" style="--pos:50%">
+        <span class="ba__img ba__after" style="background-image:url('assets/after.jpg'), linear-gradient(135deg,#1f5a26,#7dd66a 70%,#cfe08a)"></span>
+        <span class="ba__img ba__before" style="background-image:url('assets/before.jpg'), linear-gradient(135deg,#5a5436,#8a7d4a 60%,#a89b6a)"></span>
+        <span class="ba__divider" aria-hidden="true"><span class="ba__knob">⇆</span></span>
+        <span class="ba__tag ba__tag--before">Before</span>
+        <span class="ba__tag ba__tag--after">After</span>
+        <input type="range" class="ba__range" min="0" max="100" value="50"
+               aria-label="Reveal before and after the transformation" />
+      </div>
+    </div>
+  </section>
+
   <!-- ============ INTERACTIVE CTA ============ -->
   <section class="cta" id="contact">
     <div class="cta__card" id="ctaCard">
