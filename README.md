@@ -1,11 +1,19 @@
 # VERDANT — Landscape & Garden Studio
 
 A multi-section, motion-driven landing page for a gardening / landscape
-business, built on the **"Aether — The New Frontier"** design DNA
-(dark `#050505` canvas, white Inter display type, JetBrains Mono technical
-labels) with a restrained organic-green accent for the gardening theme.
+business. The structure descends from the **"Aether — The New Frontier"**
+template, re-skinned into a **light, sunlit-green theme** (soft green
+background, warm sunlight glow, deep-green accents) with JetBrains Mono
+technical labels retained from the original DNA.
 
 No build step. No runtime dependencies. Just open `index.html`.
+
+## Hero photo
+
+The hero is built around a background photo at **`assets/hero.jpg`**, with
+animated sunlit leaves drifting on top. Until you add that file, the hero
+falls back to a sunlit-green gradient so nothing looks broken. See
+[`assets/README.md`](assets/README.md) for sizing and upload steps.
 
 ## Run locally
 

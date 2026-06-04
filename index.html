@@ -45,28 +45,33 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="top">
+    <!-- Photo background. Drop your image at assets/hero.jpg — until then a
+         sunlit-green gradient shows. object-fit:cover keeps it responsive. -->
+    <img class="hero__photo" id="heroPhoto" src="assets/hero.jpg" alt=""
+         aria-hidden="true" onerror="this.classList.add('is-missing')" />
+    <div class="hero__sun" aria-hidden="true"></div>
     <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="hero__veil" aria-hidden="true"></div>
 
     <div class="hero__inner">
       <p class="label hero__label">
-        <span class="label__dot"></span> VERDANT • 01-A. EST. 2025 // LANDSCAPE STUDIO
+        <span class="label__dot"></span> Crafting Nature. Creating Serenity.
       </p>
 
       <h1 class="hero__title">
-        <span class="line"><span class="reveal">We grow the</span></span>
-        <span class="line"><span class="reveal">new <em>frontier</em></span></span>
-        <span class="line"><span class="reveal">of living space.</span></span>
+        <span class="line"><span class="reveal">We grow dreams</span></span>
+        <span class="line"><span class="reveal">into <em>beautiful</em></span></span>
+        <span class="line"><span class="reveal">living spaces.</span></span>
       </h1>
 
       <p class="hero__lede reveal">
-        A landscape &amp; garden studio bridging the space between bold concepts and
-        living reality — designed, planted, and nurtured to resonate for decades.
+        Professional gardening and landscaping that brings life, beauty and value
+        to your outdoor spaces — designed, planted, and nurtured to resonate for decades.
       </p>
 
       <div class="hero__actions reveal">
-        <a href="#contact" class="btn btn--solid magnetic">Design my garden</a>
-        <a href="#work" class="btn btn--ghost">See the work →</a>
+        <a href="#contact" class="btn btn--solid magnetic">Explore services</a>
+        <a href="#work" class="btn btn--ghost">Watch our story →</a>
       </div>
     </div>
 
