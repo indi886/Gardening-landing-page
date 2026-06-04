@@ -44,7 +44,7 @@
     { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
   );
   const hero = $(".hero");
-  $$(".reveal-section, .reveal").forEach((el) => {
+  $$(".reveal-section, .reveal, .wipe, .slide-l, .slide-r").forEach((el) => {
     if (el.classList.contains("reveal") && hero && hero.contains(el)) return; // hero handled separately
     revealObserver.observe(el);
   });

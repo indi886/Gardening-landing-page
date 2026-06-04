@@ -402,10 +402,38 @@ em { font-style: normal; color: var(--accent); }
 .hero .reveal { transition-delay: 0.05s; }
 
 /* =========================================================
+   SECTION TRANSITIONS
+   ========================================================= */
+
+/* --- Shape / morph: SVG wave dividers between sections --- */
+.wave { position: absolute; left: 0; width: 100%; line-height: 0; z-index: 4; pointer-events: none; }
+.wave svg { display: block; width: 100%; height: clamp(48px, 7vw, 104px); fill: var(--bg); }
+.wave--top { top: 0; transform: rotate(180deg); }
+.wave--bottom { bottom: 0; }
+/* gentle entrance: the wave crest settles as the band scrolls in */
+.wave svg path { transition: d .6s var(--ease); }
+
+/* --- Clip-path wipe reveal (section wipe) --- */
+.wipe {
+  clip-path: inset(0 100% 0 0);
+  -webkit-clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.05s var(--ease), -webkit-clip-path 1.05s var(--ease);
+  will-change: clip-path;
+}
+.wipe.is-in { clip-path: inset(0 0 0 0); -webkit-clip-path: inset(0 0 0 0); }
+
+/* --- Slide-in transition for alternating blocks --- */
+.slide-l { opacity: 0; transform: translateX(-48px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.slide-r { opacity: 0; transform: translateX(48px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.slide-l.is-in, .slide-r.is-in { opacity: 1; transform: none; }
+
+/* =========================================================
    REDUCED MOTION
    ========================================================= */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .reveal, .stagger, .reveal-section .label, .reveal-section h2 { opacity: 1 !important; transform: none !important; }
+  .wipe { clip-path: none !important; -webkit-clip-path: none !important; }
+  .slide-l, .slide-r { opacity: 1 !important; transform: none !important; }
   html { scroll-behavior: auto; }
 }
