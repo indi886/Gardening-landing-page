@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050505" />
+  <title>VERDANT — Landscape & Garden Studio</title>
+  <meta name="description" content="VERDANT is a landscape and garden studio crafting living spaces that elevate, engage, and resonate. Design, planting, and care — engineered like a frontier." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ============ FLOATING BACKGROUND LAYER ============ -->
+  <div class="bg-field" aria-hidden="true">
+    <span class="orb orb--1"></span>
+    <span class="orb orb--2"></span>
+    <span class="orb orb--3"></span>
+    <div class="grain"></div>
+  </div>
+
+  <!-- Floating drifting spores / leaves (JS populated) -->
+  <div class="spores" id="spores" aria-hidden="true"></div>
+
+  <!-- Scroll progress bar -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top" aria-label="VERDANT home">
+      <span class="nav__mark">✦</span>
+      <span class="nav__name">VERDANT</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#work">Work</a>
+      <a href="#process">Process</a>
+      <a href="#stats">Studio</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="btn btn--ghost nav__cta">Start a project</a>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero__veil" aria-hidden="true"></div>
+
+    <div class="hero__inner">
+      <p class="label hero__label">
+        <span class="label__dot"></span> VERDANT • 01-A. EST. 2025 // LANDSCAPE STUDIO
+      </p>
+
+      <h1 class="hero__title">
+        <span class="line"><span class="reveal">We grow the</span></span>
+        <span class="line"><span class="reveal">new <em>frontier</em></span></span>
+        <span class="line"><span class="reveal">of living space.</span></span>
+      </h1>
+
+      <p class="hero__lede reveal">
+        A landscape &amp; garden studio bridging the space between bold concepts and
+        living reality — designed, planted, and nurtured to resonate for decades.
+      </p>
+
+      <div class="hero__actions reveal">
+        <a href="#contact" class="btn btn--solid magnetic">Design my garden</a>
+        <a href="#work" class="btn btn--ghost">See the work →</a>
+      </div>
+    </div>
+
+    <!-- Marquee ticker -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>CRAFTING EXPERIENCES THAT ELEVATE, ENGAGE &amp; RESONATE</span><span class="ticker__dot">✦</span>
+        <span>5,000+ SQM PLANTED</span><span class="ticker__dot">✦</span>
+        <span>PIXEL-PERFECT, PLANT-PERFECT</span><span class="ticker__dot">✦</span>
+        <span>DESIGN // PLANT // NURTURE // THRIVE</span><span class="ticker__dot">✦</span>
+        <span>CRAFTING EXPERIENCES THAT ELEVATE, ENGAGE &amp; RESONATE</span><span class="ticker__dot">✦</span>
+        <span>5,000+ SQM PLANTED</span><span class="ticker__dot">✦</span>
+        <span>PIXEL-PERFECT, PLANT-PERFECT</span><span class="ticker__dot">✦</span>
+        <span>DESIGN // PLANT // NURTURE // THRIVE</span><span class="ticker__dot">✦</span>
+      </div>
+    </div>
+
+    <a href="#work" class="hero__scroll" aria-label="Scroll to work">
+      <span>SCROLL</span>
+      <span class="hero__scroll-line"></span>
+    </a>
+  </section>
+
+  <!-- ============ INTRO / SCROLL REVEAL ============ -->
+  <section class="intro reveal-section" id="work">
+    <p class="label"><span class="label__dot"></span> 02-B. WHAT WE DO</p>
+    <h2 class="intro__statement">
+      <span class="word">Every</span> <span class="word">garden</span> <span class="word">is</span>
+      <span class="word">a</span> <span class="word">system</span> —
+      <span class="word dim">we</span> <span class="word dim">engineer</span>
+      <span class="word dim">soil,</span> <span class="word dim">light,</span>
+      <span class="word dim">water</span> <span class="word dim">and</span>
+      <span class="word dim">time</span> <span class="word dim">into</span>
+      <span class="word">something</span> <span class="word">alive.</span>
+    </h2>
+  </section>
+
+  <!-- ============ BENTO / STAGGER CARDS ============ -->
+  <section class="bento reveal-section">
+    <div class="bento__grid">
+      <article class="card card--lg stagger" data-tilt>
+        <span class="card__index">001</span>
+        <div class="card__icon">🌿</div>
+        <h3>Garden Design</h3>
+        <p>Master plans drawn like architecture — structure, sightlines and seasonal rhythm composed before a single seed is sown.</p>
+      </article>
+
+      <article class="card stagger" data-tilt>
+        <span class="card__index">002</span>
+        <div class="card__icon">🪴</div>
+        <h3>Planting</h3>
+        <p>Species selected for your microclimate, layered for year-round texture.</p>
+      </article>
+
+      <article class="card stagger" data-tilt>
+        <span class="card__index">003</span>
+        <div class="card__icon">💧</div>
+        <h3>Irrigation</h3>
+        <p>Smart, low-waste water systems tuned to each zone automatically.</p>
+      </article>
+
+      <article class="card card--wide stagger" data-tilt>
+        <span class="card__index">004</span>
+        <div class="card__icon">✂️</div>
+        <h3>Lawn &amp; Care</h3>
+        <p>Precision mowing, feeding and seasonal maintenance — your landscape kept pixel-perfect, all year, by a dedicated crew.</p>
+      </article>
+
+      <article class="card stagger" data-tilt>
+        <span class="card__index">005</span>
+        <div class="card__icon">🌳</div>
+        <h3>Trees</h3>
+        <p>Mature specimen trees sourced, placed and established with care.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ LAYERED PARALLAX ============ -->
+  <section class="parallax" id="parallax">
+    <div class="parallax__layer parallax__layer--back" data-speed="0.15" aria-hidden="true"></div>
+    <div class="parallax__layer parallax__layer--mid" data-speed="0.35" aria-hidden="true"></div>
+    <div class="parallax__content">
+      <p class="label"><span class="label__dot"></span> 03-C. THE FRONTIER</p>
+      <h2 class="parallax__title">Beyond the<br /><em>maintained</em> lawn.</h2>
+      <p class="parallax__text">
+        We treat every plot as unexplored terrain — mapping the light, the slope and the
+        soul of a place, then building a landscape that keeps revealing itself.
+      </p>
+    </div>
+    <div class="parallax__layer parallax__layer--front" data-speed="0.6" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ STICKY STORYTELLING ============ -->
+  <section class="story" id="process">
+    <div class="story__sticky">
+      <div class="story__visual" id="storyVisual">
+        <div class="story__stage" data-stage="0">🌱</div>
+        <div class="story__stage" data-stage="1">📐</div>
+        <div class="story__stage" data-stage="2">🪏</div>
+        <div class="story__stage" data-stage="3">🌳</div>
+        <div class="story__ring"></div>
+      </div>
+    </div>
+    <div class="story__steps">
+      <div class="story__step" data-step="0">
+        <p class="label"><span class="label__dot"></span> STEP 01 — DISCOVER</p>
+        <h3>We listen to the land.</h3>
+        <p>Site survey, soil tests and a long conversation about how you want to live outdoors. Nothing is planted until the brief is alive.</p>
+      </div>
+      <div class="story__step" data-step="1">
+        <p class="label"><span class="label__dot"></span> STEP 02 — DESIGN</p>
+        <h3>We draw the future.</h3>
+        <p>Master plans, planting palettes and 3D visuals. You walk the garden before it exists — every sightline and season accounted for.</p>
+      </div>
+      <div class="story__step" data-step="2">
+        <p class="label"><span class="label__dot"></span> STEP 03 — BUILD</p>
+        <h3>We shape the ground.</h3>
+        <p>Hardscape, soil, irrigation and planting installed by our own crews — precise, clean, and engineered to last.</p>
+      </div>
+      <div class="story__step" data-step="3">
+        <p class="label"><span class="label__dot"></span> STEP 04 — THRIVE</p>
+        <h3>We nurture it on.</h3>
+        <p>Seasonal care keeps the system in balance — so the garden doesn't just survive, it grows more beautiful every year.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ANIMATED STATISTICS ============ -->
+  <section class="stats" id="stats">
+    <p class="label stats__label"><span class="label__dot"></span> 04-D. BY THE NUMBERS</p>
+    <div class="stats__grid">
+      <div class="stat stagger">
+        <span class="stat__num" data-count="1240" data-suffix="">0</span>
+        <span class="stat__label">Gardens transformed</span>
+      </div>
+      <div class="stat stagger">
+        <span class="stat__num" data-count="86" data-suffix="K">0</span>
+        <span class="stat__label">Plants &amp; trees in the ground</span>
+      </div>
+      <div class="stat stagger">
+        <span class="stat__num" data-count="19" data-suffix="yr">0</span>
+        <span class="stat__label">Seasons of practice</span>
+      </div>
+      <div class="stat stagger">
+        <span class="stat__num" data-count="99" data-suffix="%">0</span>
+        <span class="stat__label">Clients who'd plant again</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERACTIVE CTA ============ -->
+  <section class="cta" id="contact">
+    <div class="cta__card" id="ctaCard">
+      <div class="cta__glow" id="ctaGlow" aria-hidden="true"></div>
+      <p class="label"><span class="label__dot"></span> 05-E. LET'S BEGIN</p>
+      <h2 class="cta__title">Ready to grow<br />your frontier?</h2>
+      <p class="cta__text">Tell us about your space. We'll send back a first concept within a week.</p>
+
+      <form class="cta__form" id="ctaForm" novalidate>
+        <div class="cta__row">
+          <input type="text" name="name" placeholder="Your name" autocomplete="name" required />
+          <input type="email" name="email" placeholder="Email address" autocomplete="email" required />
+        </div>
+        <button type="submit" class="btn btn--solid magnetic cta__submit">
+          <span>Send the brief</span>
+          <span class="cta__arrow">→</span>
+        </button>
+        <p class="cta__success" id="ctaSuccess" hidden>✦ Thanks — your brief has landed. We'll be in touch.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer__top">
+      <span class="nav__name">VERDANT</span>
+      <p>Crafting experiences that elevate, engage, and resonate — bridging the space between bold concepts and living reality.</p>
+    </div>
+    <div class="footer__bottom">
+      <span class="label">© 2025 VERDANT STUDIO // ALL SEASONS RESERVED</span>
+      <span class="label">DESIGN • PLANT • NURTURE • THRIVE</span>
+    </div>
+  </footer>
+
+  <script src="hero.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>
