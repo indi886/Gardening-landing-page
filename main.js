@@ -17,6 +17,19 @@
     });
   });
 
+  /* ---------- Hero background video ---------- */
+  const heroVideo = $("#heroVideo");
+  if (heroVideo) {
+    // Fade in only once there are real frames to show
+    const showVideo = () => heroVideo.classList.add("is-ready");
+    if (heroVideo.readyState >= 2) showVideo();
+    else heroVideo.addEventListener("loadeddata", showVideo, { once: true });
+    // Some browsers block autoplay until a gesture — nudge it, ignore failures
+    const tryPlay = () => { const p = heroVideo.play(); if (p) p.catch(() => {}); };
+    if (reduce) { heroVideo.removeAttribute("autoplay"); heroVideo.pause(); }
+    else tryPlay();
+  }
+
   /* ---------- Nav scrolled state + scroll progress ---------- */
   const nav = $("#nav");
   const progress = $("#scrollProgress");

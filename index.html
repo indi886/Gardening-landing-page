@@ -45,7 +45,14 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="top">
-    <!-- Photo background. Drop your image at assets/hero.jpg — until then a
+    <!-- Background video. Drops behind the veil/content; gradient shows until
+         it loads, and the photo (if present) acts as the poster frame. -->
+    <video class="hero__video" id="heroVideo"
+           autoplay muted loop playsinline preload="auto"
+           poster="assets/hero.jpg" aria-hidden="true">
+      <source src="assets/hero.webm" type="video/webm" />
+    </video>
+    <!-- Photo fallback. Drop your image at assets/hero.jpg — until then a
          sunlit-green gradient shows. object-fit:cover keeps it responsive. -->
     <img class="hero__photo" id="heroPhoto" src="assets/hero.jpg" alt=""
          aria-hidden="true" onerror="this.classList.add('is-missing')" />
