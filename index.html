@@ -48,7 +48,7 @@
     <!-- Background video. Drops behind the veil/content; gradient shows until
          it loads, and the photo (if present) acts as the poster frame. -->
     <video class="hero__video" id="heroVideo"
-           autoplay muted loop playsinline preload="auto"
+           autoplay muted playsinline preload="auto"
            poster="assets/hero.jpg" aria-hidden="true">
       <source src="assets/hero.webm" type="video/webm" />
     </video>
@@ -61,14 +61,14 @@
     <div class="hero__veil" aria-hidden="true"></div>
 
     <div class="hero__inner">
-      <p class="label hero__label">
+      <p class="label hero__label reveal">
         <span class="label__dot"></span> Crafting Nature. Creating Serenity.
       </p>
 
-      <h1 class="hero__title">
-        <span class="line"><span class="reveal">We grow dreams</span></span>
-        <span class="line"><span class="reveal">into <em>beautiful</em></span></span>
-        <span class="line"><span class="reveal">living spaces.</span></span>
+      <h1 class="hero__title" aria-label="We grow dreams into beautiful living spaces.">
+        <span class="cine-line" aria-hidden="true">We grow dreams</span>
+        <span class="cine-line" aria-hidden="true">into <em>beautiful</em></span>
+        <span class="cine-line" aria-hidden="true">living spaces.</span>
       </h1>
 
       <p class="hero__lede reveal">
@@ -78,7 +78,7 @@
 
       <div class="hero__actions reveal">
         <a href="#contact" class="btn btn--solid magnetic">Explore services</a>
-        <a href="#work" class="btn btn--ghost">Watch our story →</a>
+        <a href="#work" class="btn btn--ghost hero__ghost-btn">Watch our story →</a>
       </div>
     </div>
 

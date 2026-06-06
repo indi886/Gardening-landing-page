@@ -9,26 +9,52 @@
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
-  /* ---------- Hero entrance ---------- */
+  /* ---------- Hero cinematic entrance ---------- */
   window.addEventListener("DOMContentLoaded", () => {
-    const heroReveals = $$(".hero .reveal");
-    heroReveals.forEach((el, i) => {
-      setTimeout(() => el.classList.add("is-in"), 180 + i * 120);
-    });
-  });
+    const cineLines  = $$(".hero__title .cine-line");
+    const revealEls  = $$(".hero .reveal");  // [label, lede, actions]
 
-  /* ---------- Hero background video ---------- */
-  const heroVideo = $("#heroVideo");
-  if (heroVideo) {
-    // Fade in only once there are real frames to show
-    const showVideo = () => heroVideo.classList.add("is-ready");
-    if (heroVideo.readyState >= 2) showVideo();
-    else heroVideo.addEventListener("loadeddata", showVideo, { once: true });
-    // Some browsers block autoplay until a gesture — nudge it, ignore failures
-    const tryPlay = () => { const p = heroVideo.play(); if (p) p.catch(() => {}); };
-    if (reduce) { heroVideo.removeAttribute("autoplay"); heroVideo.pause(); }
-    else tryPlay();
-  }
+    // Timing (ms after video begins playing):
+    //   label → 300   line-1 → 900   line-2 → 2050   line-3 → 3200
+    //   lede  → 4200  actions → 4750
+    const LINE_DELAYS   = [900, 2050, 3200];
+    const REVEAL_DELAYS = [300, 4200, 4750]; // matches order of .reveal elements
+
+    function runCineSequence() {
+      revealEls.forEach((el, i) => {
+        setTimeout(() => el.classList.add("is-in"), REVEAL_DELAYS[i] ?? 4200);
+      });
+      cineLines.forEach((line, i) => {
+        setTimeout(() => line.classList.add("is-in"), LINE_DELAYS[i] ?? (900 + i * 1150));
+      });
+    }
+
+    if (reduce) {
+      // Skip animation entirely for motion-sensitive users
+      cineLines.forEach(l => l.classList.add("is-in"));
+      revealEls.forEach(l => l.classList.add("is-in"));
+      return;
+    }
+
+    // Trigger from the video's own play event so timing is always in sync
+    let sequenceFired = false;
+    const fireOnce = () => { if (sequenceFired) return; sequenceFired = true; runCineSequence(); };
+
+    const vid = $("#heroVideo");
+    if (vid) {
+      // Best case: browser autoplays immediately
+      vid.addEventListener("play", fireOnce, { once: true });
+      // Fade video in once frames are available
+      const showVideo = () => vid.classList.add("is-ready");
+      if (vid.readyState >= 2) { showVideo(); } else { vid.addEventListener("loadeddata", showVideo, { once: true }); }
+      // Nudge autoplay; ignore silent block
+      const p = vid.play(); if (p) p.catch(() => {});
+      // Fallback: if play event hasn't fired in 900 ms, start sequence anyway
+      setTimeout(fireOnce, 900);
+    } else {
+      setTimeout(fireOnce, 400);
+    }
+  });
 
   /* ---------- Nav scrolled state + scroll progress ---------- */
   const nav = $("#nav");
