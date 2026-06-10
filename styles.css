@@ -531,27 +531,58 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   font-family: var(--font-serif); font-style: italic; font-size: 19px; color: var(--accent);
 }
 
-/* ----- steps column + growth rail ----- */
-.story__steps { position: relative; display: flex; flex-direction: column; padding-left: 54px; }
-.story__rail { position: absolute; left: 14px; top: 6%; bottom: 6%; width: 2px; background: var(--border); border-radius: 2px; }
-.story__rail-fill {
-  position: absolute; inset: 0; border-radius: 2px;
-  background: linear-gradient(180deg, var(--accent-soft), var(--accent), var(--accent-deep));
-  transform-origin: top; transform: scaleY(0);
-  box-shadow: 0 0 10px rgba(58,143,58,0.45);
-}
+/* ----- steps column: portal trigger + outpour grid ----- */
+.story__steps { position: relative; display: flex; flex-direction: column; align-items: center; gap: clamp(28px, 4vw, 44px); justify-content: center; min-height: 80svh; }
+.story__grid { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; width: 100%; }
+.story__rail { display: none; }
 
-.story__step { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
-/* node on the rail */
-.story__step::before {
-  content: ""; position: absolute; left: -47px; top: 50%; margin-top: -7px;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--bg); border: 2px solid var(--border);
-  transition: border-color .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
-  z-index: 1;
+/* --- the portal trigger --- */
+.story__portal {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px;
+  background: none; border: none; cursor: pointer; padding: 10px;
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
 }
-.story__step.is-active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 7px rgba(58,143,58,0.18), 0 0 18px rgba(58,143,58,0.55); transform: scale(1.2); }
-.story__step.is-done::before { background: var(--accent-soft); border-color: var(--accent-soft); }
+.story__portal-core {
+  position: relative; z-index: 2;
+  width: 86px; height: 86px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 26px; color: #fff;
+  background: radial-gradient(circle at 32% 28%, var(--accent), var(--accent-deep));
+  box-shadow: 0 14px 38px rgba(31,90,38,0.4), inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+  animation: spin 14s linear infinite;
+}
+.story__portal-halo {
+  position: absolute; top: 10px; width: 86px; height: 86px; border-radius: 50%;
+  border: 1px solid var(--accent-soft);
+  animation: portalPulse 2.2s var(--ease) infinite;
+}
+@keyframes portalPulse {
+  0%   { transform: scale(1); opacity: .9; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.story__portal-label {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-deep);
+}
+.story__portal:hover .story__portal-core { transform: scale(1.1); box-shadow: 0 20px 50px rgba(31,90,38,0.5), inset 0 1px 0 rgba(255,255,255,0.35); }
+.story__portal:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 16px; }
+/* trigger morph on fire: core implodes, halo bursts, label fades */
+.story__portal.is-fired { pointer-events: none; }
+.story__portal.is-fired .story__portal-core { animation: portalImplode .65s var(--ease) forwards; }
+@keyframes portalImplode {
+  30%  { transform: scale(1.35); }
+  100% { transform: scale(0); opacity: 0; }
+}
+.story__portal.is-fired .story__portal-halo { animation: portalBurst .6s var(--ease) forwards; }
+@keyframes portalBurst { to { transform: scale(3.4); opacity: 0; } }
+.story__portal.is-fired .story__portal-label { opacity: 0; transform: translateY(8px); transition: opacity .4s var(--ease), transform .4s var(--ease); }
+/* at fire-time the trigger leaves the flow (grid takes final layout
+   BEFORE trajectories are measured — no post-landing shift) */
+.story.is-collapsed .story__portal { position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 5; }
+.story.is-poured .story__portal { opacity: 0; pointer-events: none; }
+
+.story__step { position: relative; min-height: 0; display: flex; flex-direction: column; justify-content: stretch; }
+.story__step .story__card { flex: 1; }
 
 /* the card itself: stateful — enters with 3D rise, then upcoming / active / done */
 .story__step { perspective: 1200px; }
@@ -577,6 +608,18 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
               border-color .55s var(--ease), box-shadow .55s var(--ease);
 }
 .story__step.is-seen.is-done .story__card { opacity: 0.55; transform: scale(.985); }
+
+/* --- portal mode (JS adds .is-portal at init): trajectories are inline,
+       so neutralise the CSS pre-entrance pose and soften the dim states --- */
+.story.is-portal .story__card { transform: none; filter: none; }
+.story.is-portal .story__step.is-seen .story__card,
+.story.is-portal .story__step.is-seen.is-done .story__card { opacity: .82; transform: none; filter: none; }
+.story.is-portal .story__step.is-seen.is-active .story__card { opacity: 1; }
+/* compact type so four cards sit comfortably in the half-width grid */
+.story.is-portal .story__card { padding: clamp(22px, 2vw, 30px); gap: 12px; }
+.story.is-portal .story__step h3 { font-size: clamp(21px, 1.9vw, 28px); }
+.story.is-portal .story__step .story__card > p:not(.label) { font-size: 14.5px; }
+.story.is-portal .story__num { font-size: clamp(48px, 4.6vw, 72px); }
 
 /* inner content cascade — each element rises in sequence after the card lands */
 .story__card .label,
@@ -659,13 +702,14 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 @media (max-width: 820px) {
   .story__layout { grid-template-columns: 1fr; }
   .story__sticky { display: none; }
-  .story__steps { padding-left: 40px; }
-  .story__rail { left: 8px; top: 2%; bottom: 2%; }
-  .story__step { min-height: auto; padding: 26px 0; perspective: none; }
-  .story__step::before { left: -39px; }
-  /* entrance still plays; once seen, cards sit at full strength (no dim states) */
+  .story__steps { min-height: 0; }
+  .story__grid { grid-template-columns: 1fr; }
+  .story__step { min-height: auto; perspective: none; }
+  /* once poured/seen, cards sit at full strength (no dim states on touch) */
   .story__step.is-seen .story__card,
-  .story__step.is-seen.is-done .story__card { opacity: 1; transform: none; }
+  .story__step.is-seen.is-done .story__card,
+  .story.is-portal .story__step.is-seen .story__card,
+  .story.is-portal .story__step.is-seen.is-done .story__card { opacity: 1; transform: none; }
   .story__mini { display: block; }
   .story__tags li { opacity: 1; transform: none; }
 }
@@ -1046,6 +1090,8 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   .story__card, .story__tags li { opacity: 1 !important; transform: none !important; filter: none !important; }
   .story__card .label, .story__card h3, .story__card > p:not(.label), .story__card .story__tags { opacity: 1 !important; transform: none !important; }
   .story__card::before { animation: none !important; }
+  .story__portal { display: none !important; }
+  .story__portal-halo, .story__portal-core { animation: none !important; }
   .story__arc-fill { stroke-dashoffset: 0 !important; }
   .story__rail-fill { transform: scaleY(1) !important; }
   .quote[aria-hidden="true"] { display: none; } /* marquee duplicates not needed when static */

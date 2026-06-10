@@ -267,6 +267,13 @@
         </div>
       </div>
       <div class="story__steps">
+        <!-- portal trigger: the seed every card pours out of -->
+        <button class="story__portal" id="storyPortal" type="button" aria-expanded="false" aria-controls="storyGrid">
+          <span class="story__portal-halo" aria-hidden="true"></span>
+          <span class="story__portal-core" aria-hidden="true">✦</span>
+          <span class="story__portal-label">Open our process</span>
+        </button>
+        <div class="story__grid" id="storyGrid">
         <!-- growth rail: the root that draws itself down as you scroll -->
         <div class="story__rail" aria-hidden="true"><span class="story__rail-fill" id="storyRailFill"></span></div>
         <div class="story__step" data-step="0" data-name="Discover">
@@ -309,6 +316,7 @@
             <ul class="story__tags" aria-hidden="true"><li>Seasonal care</li><li>Lawn program</li><li>Tuning</li></ul>
           </div>
         </div>
+        </div><!-- /story__grid -->
       </div>
     </div>
   </section>
