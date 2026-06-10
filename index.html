@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#050505" />
+  <meta name="theme-color" content="#eaf3df" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1d4d20" media="(prefers-color-scheme: dark)" />
   <title>Premium Fencing & Landscaping — Melbourne</title>
   <meta name="description" content="Premium Fencing & Landscaping crafts living spaces that elevate, engage, and resonate. Fencing, garden design, planting and care across Melbourne — engineered like a frontier." />
 
@@ -15,10 +16,10 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Premium Fencing & Landscaping — Melbourne" />
   <meta property="og:description" content="We grow dreams into beautiful living spaces. Fencing, design, planting, and care — engineered like a frontier." />
-  <meta property="og:image" content="assets/hero.jpg" />
+  <meta property="og:image" content="assets/tiered-planter-boxes.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80' fill='%233a8f3a'%3E✦%3C/text%3E%3C/svg%3E" />
-  <link rel="preload" as="image" href="assets/hero.jpg" />
+  <link rel="preload" as="video" href="assets/hero.webm" type="video/webm" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -43,12 +44,35 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ PAGE-LOAD BRAND CURTAIN ============ -->
+  <div class="curtain" id="introCurtain" aria-hidden="true">
+    <div class="curtain__inner">
+      <span class="curtain__mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="img">
+          <path class="curtain__rail" d="M9 30 H39" />
+          <path class="curtain__rail" d="M9 36 H39" />
+          <path class="curtain__picket" d="M14 41 V30 l2.4 -3 2.4 3" />
+          <path class="curtain__picket" d="M24 41 V27" />
+          <path class="curtain__picket" d="M34 41 V30 l-2.4 -3 -2.4 3" />
+          <g class="curtain__leaf">
+            <path class="curtain__leaf-body" d="M24 26 C17 22 17.5 12 24 7 C30.5 12 31 22 24 26 Z" />
+            <path class="curtain__leaf-vein" d="M24 24 V10" />
+          </g>
+        </svg>
+      </span>
+      <span class="curtain__word">
+        <span class="curtain__name">PREMIUM</span>
+        <span class="curtain__sub">Fencing &amp; Landscaping</span>
+      </span>
+    </div>
+  </div>
+
   <!-- ============ FLOATING BACKGROUND LAYER ============ -->
   <div class="bg-field" aria-hidden="true">
     <span class="orb orb--1"></span>
     <span class="orb orb--2"></span>
     <span class="orb orb--3"></span>
-    <div class="grain"></div>
   </div>
 
   <!-- Floating drifting spores / leaves (JS populated) -->
@@ -362,7 +386,9 @@
 
     <div class="work__grid">
       <!-- Feature tile -->
-      <figure class="shot shot--feature reveal-img" style="--d:0s">
+      <figure class="shot shot--feature reveal-img" style="--d:0s"
+        data-full="assets/tiered-planter-boxes.jpg" data-title="Tiered Planter Boxes" data-sub="Feature garden &amp; lighting" data-tag="Landscaping"
+        tabindex="0" role="button" aria-label="View project: Tiered Planter Boxes">
         <span class="shot__img" style="background-image:url('assets/tiered-planter-boxes.jpg'), linear-gradient(135deg,#5a3a22,#8a5a34)"></span>
         <span class="shot__num" aria-hidden="true">01</span>
         <span class="shot__tag">Landscaping</span>
@@ -373,7 +399,9 @@
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
 
-      <figure class="shot shot--tall reveal-img" style="--d:.08s">
+      <figure class="shot shot--tall reveal-img" style="--d:.08s"
+        data-full="assets/sleeper-retaining-lawn.jpg" data-title="Sleeper Retaining &amp; Lawn" data-sub="Front-yard transformation" data-tag="Landscaping"
+        tabindex="0" role="button" aria-label="View project: Sleeper Retaining and Lawn">
         <span class="shot__img" style="background-image:url('assets/sleeper-retaining-lawn.jpg'), linear-gradient(135deg,#5a3a22,#a7763f)"></span>
         <span class="shot__num" aria-hidden="true">02</span>
         <span class="shot__tag">Landscaping</span>
@@ -384,7 +412,9 @@
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
 
-      <figure class="shot reveal-img" style="--d:.16s">
+      <figure class="shot reveal-img" style="--d:.16s"
+        data-full="assets/colorbond-garden-beds.jpg" data-title="Colorbond &amp; Garden Beds" data-sub="Privacy fence &amp; planting" data-tag="Fencing"
+        tabindex="0" role="button" aria-label="View project: Colorbond and Garden Beds">
         <span class="shot__img" style="background-image:url('assets/colorbond-garden-beds.jpg'), linear-gradient(135deg,#3a4250,#6b7480)"></span>
         <span class="shot__num" aria-hidden="true">03</span>
         <span class="shot__tag shot__tag--fence">Fencing</span>
@@ -395,7 +425,9 @@
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
 
-      <figure class="shot reveal-img" style="--d:.24s">
+      <figure class="shot reveal-img" style="--d:.24s"
+        data-full="assets/turf-driveway-frontyard.jpg" data-title="Turf &amp; Driveway" data-sub="Lawn &amp; concrete edging" data-tag="Landscaping"
+        tabindex="0" role="button" aria-label="View project: Turf and Driveway">
         <span class="shot__img" style="background-image:url('assets/turf-driveway-frontyard.jpg'), linear-gradient(135deg,#2f7d3a,#7dd66a)"></span>
         <span class="shot__num" aria-hidden="true">04</span>
         <span class="shot__tag">Landscaping</span>
@@ -406,7 +438,9 @@
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
 
-      <figure class="shot shot--tall reveal-img" style="--d:.32s">
+      <figure class="shot shot--tall reveal-img" style="--d:.32s"
+        data-full="assets/aluminium-slat-gates.jpg" data-title="Aluminium Slat Gates" data-sub="Custom driveway entrance" data-tag="Fencing"
+        tabindex="0" role="button" aria-label="View project: Aluminium Slat Gates">
         <span class="shot__img" style="background-image:url('assets/aluminium-slat-gates.jpg'), linear-gradient(135deg,#5a3a22,#a7763f)"></span>
         <span class="shot__num" aria-hidden="true">05</span>
         <span class="shot__tag shot__tag--fence">Fencing</span>
@@ -417,7 +451,9 @@
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
 
-      <figure class="shot shot--wide reveal-img" style="--d:.40s">
+      <figure class="shot shot--wide reveal-img" style="--d:.40s"
+        data-full="assets/timber-paling-fence.jpg" data-title="Timber Paling Fence" data-sub="Boundary &amp; side access" data-tag="Fencing"
+        tabindex="0" role="button" aria-label="View project: Timber Paling Fence">
         <span class="shot__img" style="background-image:url('assets/timber-paling-fence.jpg'), linear-gradient(135deg,#7a6a45,#b59a63)"></span>
         <span class="shot__num" aria-hidden="true">06</span>
         <span class="shot__tag shot__tag--fence">Fencing</span>
@@ -549,6 +585,25 @@
   </section>
 
   </main>
+
+  <!-- ============ PROJECT LIGHTBOX ============ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Project viewer" hidden>
+    <button class="lightbox__close" id="lightboxClose" type="button" aria-label="Close viewer">✕</button>
+    <button class="lightbox__nav lightbox__prev" id="lightboxPrev" type="button" aria-label="Previous project">‹</button>
+    <figure class="lightbox__stage">
+      <img class="lightbox__img" id="lightboxImg" alt="" />
+      <figcaption class="lightbox__cap">
+        <span class="lightbox__tag" id="lightboxTag"></span>
+        <span class="lightbox__title" id="lightboxTitle"></span>
+        <span class="lightbox__sub" id="lightboxSub"></span>
+        <span class="lightbox__count" id="lightboxCount"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__next" id="lightboxNext" type="button" aria-label="Next project">›</button>
+  </div>
+
+  <!-- film grain overlay -->
+  <div class="grain" aria-hidden="true"></div>
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">

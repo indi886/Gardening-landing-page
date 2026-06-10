@@ -18,6 +18,35 @@
   window.addEventListener("DOMContentLoaded", toTop);
   window.addEventListener("load", toTop);    // after images/hash settle
 
+  /* ---------- Single rAF-batched scroll dispatcher ----------
+     All scroll work funnels through one passive listener + one rAF per frame,
+     instead of three separate listeners each reading layout on every tick. */
+  const scrollFns = [];
+  let scrollTicking = false;
+  function runScrollFns() { for (const fn of scrollFns) fn(); scrollTicking = false; }
+  window.addEventListener("scroll", () => {
+    if (!scrollTicking) { scrollTicking = true; requestAnimationFrame(runScrollFns); }
+  }, { passive: true });
+
+  /* ---------- Page-load brand curtain (once per session) ---------- */
+  const curtain = $("#introCurtain");
+  if (curtain) {
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return; dismissed = true;
+      curtain.classList.add("is-lifting");
+      curtain.addEventListener("transitionend", () => curtain.classList.add("is-done"), { once: true });
+      setTimeout(() => curtain.classList.add("is-done"), 1200); // safety net
+    };
+    if (reduce || sessionStorage.getItem("introSeen")) {
+      curtain.classList.add("is-done"); // no theatre on repeat visits / reduced motion
+    } else {
+      sessionStorage.setItem("introSeen", "1");
+      window.addEventListener("load", () => setTimeout(dismiss, 1400));
+      setTimeout(dismiss, 2600); // safety if load is slow
+    }
+  }
+
   /* ---------- Hero cinematic entrance ---------- */
   window.addEventListener("DOMContentLoaded", () => {
     const cineLines  = $$(".hero__title .cine-line");
@@ -76,7 +105,7 @@
       progress.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
     }
   }
-  window.addEventListener("scroll", onScroll, { passive: true });
+  scrollFns.push(onScroll);
   onScroll();
 
   /* ---------- Generic scroll reveal (IntersectionObserver) ---------- */
@@ -126,7 +155,7 @@
       const lit = Math.round(p * words.length);
       words.forEach((w, i) => w.classList.toggle("lit", i < lit));
     };
-    window.addEventListener("scroll", onIntro, { passive: true });
+    scrollFns.push(onIntro);
     onIntro();
   }
 
@@ -143,7 +172,7 @@
         layer.style.transform = `translate3d(0, ${(-center * speed).toFixed(1)}px, 0)`;
       });
     };
-    window.addEventListener("scroll", onParallax, { passive: true });
+    scrollFns.push(onParallax);
     onParallax();
   }
 
@@ -499,6 +528,101 @@
       ],
       { duration: dur, easing: "linear" }
     ).onfinish = () => animateSpore(s, false);
+  }
+
+  /* ---------- Project lightbox (shared-element zoom where supported) ---------- */
+  const lightbox = $("#lightbox");
+  const tiles = $$(".shot");
+  if (lightbox && tiles.length) {
+    const lbImg = $("#lightboxImg");
+    const lbTitle = $("#lightboxTitle");
+    const lbSub = $("#lightboxSub");
+    const lbTag = $("#lightboxTag");
+    const lbCount = $("#lightboxCount");
+    const decode = (s) => { const t = document.createElement("textarea"); t.innerHTML = s || ""; return t.value; };
+    const items = tiles.map((t) => ({
+      el: t,
+      full: t.dataset.full,
+      title: decode(t.dataset.title),
+      sub: decode(t.dataset.sub),
+      tag: decode(t.dataset.tag),
+    }));
+    let current = -1;
+    let lastFocus = null;
+
+    const render = (i) => {
+      const it = items[i];
+      lbImg.src = it.full; lbImg.alt = it.title;
+      lbTitle.textContent = it.title;
+      lbSub.textContent = it.sub;
+      lbTag.textContent = it.tag;
+      lbCount.textContent = "0" + (i + 1) + " / 0" + items.length;
+      current = i;
+    };
+
+    const canVT = !reduce && typeof document.startViewTransition === "function";
+    const setVTName = (i, on) => {
+      const span = $(".shot__img", items[i].el);
+      if (span) span.style.viewTransitionName = on ? "project-img" : "";
+    };
+
+    const open = (i) => {
+      lastFocus = document.activeElement;
+      const show = () => {
+        render(i);
+        lightbox.hidden = false;
+        requestAnimationFrame(() => lightbox.classList.add("is-open"));
+        document.body.style.overflow = "hidden";
+        $("#lightboxClose").focus();
+      };
+      if (canVT) {
+        setVTName(i, true);                  // thumbnail owns the name in the OLD state
+        lightbox.classList.add("vt-active"); // lightbox img will own it once visible (still hidden now)
+        const vt = document.startViewTransition(() => {
+          show();
+          setVTName(i, false);               // hand the name to the lightbox img in the NEW state
+        });
+        vt.finished.finally(() => { setVTName(i, false); lightbox.classList.remove("vt-active"); });
+      } else { show(); }
+    };
+
+    const close = () => {
+      lightbox.classList.remove("is-open");
+      const done = () => { lightbox.hidden = true; document.body.style.overflow = ""; if (lastFocus) lastFocus.focus(); };
+      if (reduce) { done(); }
+      else { lightbox.addEventListener("transitionend", done, { once: true }); setTimeout(done, 450); }
+    };
+
+    const go = (dir) => {
+      const next = (current + dir + items.length) % items.length;
+      // quick cross-fade of just the image
+      lbImg.style.opacity = "0";
+      setTimeout(() => { render(next); lbImg.style.opacity = ""; }, 140);
+    };
+
+    items.forEach((it, i) => {
+      it.el.addEventListener("click", () => open(i));
+      it.el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(i); }
+      });
+    });
+    $("#lightboxClose").addEventListener("click", close);
+    $("#lightboxPrev").addEventListener("click", () => go(-1));
+    $("#lightboxNext").addEventListener("click", () => go(1));
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) close(); });
+    window.addEventListener("keydown", (e) => {
+      if (lightbox.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "Tab") {
+        // simple focus trap across the lightbox controls
+        const f = $$("button", lightbox);
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
   }
 
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
