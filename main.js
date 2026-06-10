@@ -9,6 +9,15 @@
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
+  /* ---------- Always open/reload at the hero (top) ----------
+     Stop the browser restoring the last scroll position (common on
+     mobile reloads) and override any landing #hash jump on first load. */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  const toTop = () => window.scrollTo(0, 0);
+  toTop();                                   // before paint
+  window.addEventListener("DOMContentLoaded", toTop);
+  window.addEventListener("load", toTop);    // after images/hash settle
+
   /* ---------- Hero cinematic entrance ---------- */
   window.addEventListener("DOMContentLoaded", () => {
     const cineLines  = $$(".hero__title .cine-line");
