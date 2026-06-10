@@ -239,37 +239,76 @@
     </div>
   </section>
 
-  <!-- ============ STICKY STORYTELLING ============ -->
+  <!-- ============ STICKY STORYTELLING — THE GROWTH JOURNEY ============ -->
   <section class="story" id="process">
-    <div class="story__sticky">
-      <div class="story__visual" id="storyVisual">
-        <div class="story__stage" data-stage="0">🌱</div>
-        <div class="story__stage" data-stage="1">📐</div>
-        <div class="story__stage" data-stage="2">🪏</div>
-        <div class="story__stage" data-stage="3">🌳</div>
-        <div class="story__ring"></div>
-      </div>
+    <div class="story__head reveal-section">
+      <p class="label"><span class="label__dot"></span> 03-C. HOW WE WORK</p>
+      <h2 class="story__heading">From first visit<br />to <em>full bloom</em>.</h2>
     </div>
-    <div class="story__steps">
-      <div class="story__step" data-step="0">
-        <p class="label"><span class="label__dot"></span> STEP 01 — DISCOVER</p>
-        <h3>We listen to the land.</h3>
-        <p>Site survey, soil tests and a long conversation about how you want to live outdoors. Nothing is planted until the brief is alive.</p>
+    <div class="story__layout">
+      <div class="story__sticky">
+        <div class="story__visual" id="storyVisual">
+          <div class="story__blob" aria-hidden="true"></div>
+          <div class="story__stage" data-stage="0">🌱</div>
+          <div class="story__stage" data-stage="1">📐</div>
+          <div class="story__stage" data-stage="2">🪏</div>
+          <div class="story__stage" data-stage="3">🌳</div>
+          <div class="story__ring"></div>
+          <!-- scroll-driven progress arc -->
+          <svg class="story__arc" viewBox="0 0 260 260" aria-hidden="true">
+            <circle class="story__arc-track" cx="130" cy="130" r="120" />
+            <circle class="story__arc-fill" id="storyArc" cx="130" cy="130" r="120" />
+          </svg>
+          <div class="story__counter" aria-hidden="true">
+            <span class="story__counter-num" id="storyCounter">01</span>
+            <em>/ 04</em>
+          </div>
+          <p class="story__counter-name" id="storyStageName" aria-hidden="true">Discover</p>
+        </div>
       </div>
-      <div class="story__step" data-step="1">
-        <p class="label"><span class="label__dot"></span> STEP 02 — DESIGN</p>
-        <h3>We draw the future.</h3>
-        <p>Master plans, planting palettes and 3D visuals. You walk the garden before it exists — every sightline and season accounted for.</p>
-      </div>
-      <div class="story__step" data-step="2">
-        <p class="label"><span class="label__dot"></span> STEP 03 — BUILD</p>
-        <h3>We shape the ground.</h3>
-        <p>Hardscape, soil, irrigation and planting installed by our own crews — precise, clean, and engineered to last.</p>
-      </div>
-      <div class="story__step" data-step="3">
-        <p class="label"><span class="label__dot"></span> STEP 04 — THRIVE</p>
-        <h3>We nurture it on.</h3>
-        <p>Seasonal care keeps the system in balance — so the garden doesn't just survive, it grows more beautiful every year.</p>
+      <div class="story__steps">
+        <!-- growth rail: the root that draws itself down as you scroll -->
+        <div class="story__rail" aria-hidden="true"><span class="story__rail-fill" id="storyRailFill"></span></div>
+        <div class="story__step" data-step="0" data-name="Discover">
+          <div class="story__card">
+            <span class="story__num" aria-hidden="true">01</span>
+            <span class="story__mini" aria-hidden="true">🌱</span>
+            <p class="label"><span class="label__dot"></span> STEP 01 — DISCOVER</p>
+            <h3>We listen to the land.</h3>
+            <p>Site survey, soil tests and a long conversation about how you want to live outdoors. Nothing is planted until the brief is alive.</p>
+            <ul class="story__tags" aria-hidden="true"><li>Site survey</li><li>Soil testing</li><li>Brief</li></ul>
+          </div>
+        </div>
+        <div class="story__step" data-step="1" data-name="Design">
+          <div class="story__card">
+            <span class="story__num" aria-hidden="true">02</span>
+            <span class="story__mini" aria-hidden="true">📐</span>
+            <p class="label"><span class="label__dot"></span> STEP 02 — DESIGN</p>
+            <h3>We draw the future.</h3>
+            <p>Master plans, planting palettes and 3D visuals. You walk the garden before it exists — every sightline and season accounted for.</p>
+            <ul class="story__tags" aria-hidden="true"><li>Master plan</li><li>3D visuals</li><li>Fencing spec</li></ul>
+          </div>
+        </div>
+        <div class="story__step" data-step="2" data-name="Build">
+          <div class="story__card">
+            <span class="story__num" aria-hidden="true">03</span>
+            <span class="story__mini" aria-hidden="true">🪏</span>
+            <p class="label"><span class="label__dot"></span> STEP 03 — BUILD</p>
+            <h3>We shape the ground.</h3>
+            <p>Fencing, hardscape, soil, irrigation and planting installed by our own crews — precise, clean, and engineered to last.</p>
+            <ul class="story__tags" aria-hidden="true"><li>Fencing &amp; gates</li><li>Retaining</li><li>Planting</li></ul>
+          </div>
+        </div>
+        <div class="story__step" data-step="3" data-name="Thrive">
+          <div class="story__card">
+            <span class="story__num" aria-hidden="true">04</span>
+            <span class="story__mini" aria-hidden="true">🌳</span>
+            <p class="label"><span class="label__dot"></span> STEP 04 — THRIVE</p>
+            <h3>We nurture it on.</h3>
+            <p>Seasonal care keeps the system in balance — so the garden doesn't just survive, it grows more beautiful every year.</p>
+            <ul class="story__tags" aria-hidden="true"><li>Seasonal care</li><li>Lawn program</li><li>Tuning</li></ul>
+          </div>
+        </div>
       </div>
     </div>
   </section>

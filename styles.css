@@ -475,25 +475,141 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 /* =========================================================
    STICKY STORYTELLING
    ========================================================= */
-.story { position: relative; display: grid; grid-template-columns: 1fr 1fr; max-width: 1280px; margin: 0 auto; padding: var(--section-pad) clamp(20px, 5vw, 56px); gap: 40px; }
+.story { position: relative; max-width: 1280px; margin: 0 auto; padding: var(--section-pad) clamp(20px, 5vw, 56px) 0; }
+.story__head { margin-bottom: clamp(20px, 4vw, 56px); }
+.story__head .label { margin-bottom: 16px; }
+.story__heading { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4.2vw, 56px); line-height: 1.04; letter-spacing: -0.02em; color: var(--text); }
+
+.story__layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; }
 .story__sticky { position: relative; }
 .story__visual { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; justify-content: center; }
-.story__stage { position: absolute; font-size: clamp(90px, 16vw, 200px); opacity: 0; transform: scale(0.7) translateY(20px); filter: blur(6px); transition: opacity .6s var(--ease), transform .6s var(--ease), filter .6s var(--ease); }
-.story__stage.is-active { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+
+/* morphing organic blob behind the stage — slow, alive */
+.story__blob {
+  position: absolute; width: min(64%, 380px); aspect-ratio: 1;
+  background: linear-gradient(135deg, rgba(125,214,106,0.30), rgba(251,231,166,0.45), rgba(58,143,58,0.22));
+  filter: blur(2px);
+  animation: blobMorph 14s ease-in-out infinite, spin 60s linear infinite reverse;
+}
+@keyframes blobMorph {
+  0%,100% { border-radius: 58% 42% 38% 62% / 52% 60% 40% 48%; }
+  33%      { border-radius: 40% 60% 62% 38% / 42% 38% 62% 58%; }
+  66%      { border-radius: 62% 38% 46% 54% / 60% 52% 48% 40%; }
+}
+
+.story__stage { position: absolute; z-index: 2; font-size: clamp(90px, 16vw, 200px); opacity: 0; transform: scale(0.7) translateY(20px); filter: blur(6px); transition: opacity .6s var(--ease), transform .6s var(--ease), filter .6s var(--ease); }
+.story__stage.is-active { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); animation: stageFloat 5s ease-in-out .7s infinite; }
+@keyframes stageFloat { 0%,100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-12px) rotate(1.5deg); } }
+
 .story__ring { position: absolute; width: min(60%, 360px); aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--border); background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%); box-shadow: 0 0 80px rgba(58,143,58,0.18) inset; animation: spin 24s linear infinite; }
 .story__ring::before, .story__ring::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px dashed rgba(58,143,58,0.3); }
 .story__ring::after { inset: 14%; border-style: solid; border-color: var(--border); }
 
-.story__steps { display: flex; flex-direction: column; }
-.story__step { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 16px; opacity: 0.3; transition: opacity .5s var(--ease); }
-.story__step.is-active { opacity: 1; }
-.story__step h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4vw, 52px); letter-spacing: -0.02em; color: var(--text); }
-.story__step p { color: var(--text-dim); max-width: 44ch; font-size: 17px; }
+/* scroll-driven progress arc wrapping the whole visual */
+.story__arc { position: absolute; width: min(74%, 430px); aspect-ratio: 1; transform: rotate(-90deg); z-index: 1; overflow: visible; }
+.story__arc circle { fill: none; stroke-width: 3; }
+.story__arc-track { stroke: var(--border); stroke-dasharray: 4 8; stroke-linecap: round; }
+.story__arc-fill {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-dasharray: 754; stroke-dashoffset: 754;   /* 2πr, r=120 */
+  filter: drop-shadow(0 0 6px rgba(58,143,58,0.5));
+}
+
+/* live readout: stage counter + name */
+.story__counter {
+  position: absolute; bottom: 16%; z-index: 3;
+  display: flex; align-items: baseline; gap: 6px;
+  font-family: var(--font-display);
+}
+.story__counter-num { font-size: 44px; font-weight: 700; letter-spacing: -0.03em; color: var(--accent-deep); display: inline-block; }
+.story__counter-num.is-tick { animation: counterTick .45s var(--ease); }
+@keyframes counterTick { 0% { opacity: 0; transform: translateY(14px) scale(.8); } 100% { opacity: 1; transform: none; } }
+.story__counter em { font-family: var(--font-mono); font-style: normal; font-size: 13px; letter-spacing: .12em; color: var(--text-dim); }
+.story__counter-name {
+  position: absolute; bottom: 11%; z-index: 3;
+  font-family: var(--font-serif); font-style: italic; font-size: 19px; color: var(--accent);
+}
+
+/* ----- steps column + growth rail ----- */
+.story__steps { position: relative; display: flex; flex-direction: column; padding-left: 54px; }
+.story__rail { position: absolute; left: 14px; top: 6%; bottom: 6%; width: 2px; background: var(--border); border-radius: 2px; }
+.story__rail-fill {
+  position: absolute; inset: 0; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent-soft), var(--accent), var(--accent-deep));
+  transform-origin: top; transform: scaleY(0);
+  box-shadow: 0 0 10px rgba(58,143,58,0.45);
+}
+
+.story__step { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+/* node on the rail */
+.story__step::before {
+  content: ""; position: absolute; left: -47px; top: 50%; margin-top: -7px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--border);
+  transition: border-color .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease);
+  z-index: 1;
+}
+.story__step.is-active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 7px rgba(58,143,58,0.18), 0 0 18px rgba(58,143,58,0.55); transform: scale(1.2); }
+.story__step.is-done::before { background: var(--accent-soft); border-color: var(--accent-soft); }
+
+/* the card itself: stateful — upcoming / active / done */
+.story__card {
+  position: relative; padding: clamp(26px, 3vw, 40px);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px rgba(22,49,15,0.06);
+  display: flex; flex-direction: column; gap: 16px;
+  opacity: 0.35; transform: translateY(14px) scale(.985);
+  transition: opacity .55s var(--ease), transform .55s var(--ease), border-color .55s var(--ease), box-shadow .55s var(--ease);
+}
+.story__step.is-active .story__card {
+  opacity: 1; transform: none;
+  border-color: var(--accent-soft);
+  box-shadow: 0 30px 70px rgba(31,90,38,0.16), 0 0 0 1px rgba(125,214,106,0.25);
+}
+.story__step.is-done .story__card { opacity: 0.55; transform: scale(.985); }
+
+/* giant ghost number behind each card */
+.story__num {
+  position: absolute; top: 6px; right: 18px;
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(64px, 7vw, 104px);
+  line-height: 1; letter-spacing: -0.04em; color: var(--bg);
+  -webkit-text-stroke: 1.5px var(--border); pointer-events: none;
+  transition: -webkit-text-stroke-color .5s var(--ease), color .5s var(--ease);
+}
+.story__step.is-active .story__num { -webkit-text-stroke-color: var(--accent-soft); color: #f4f9ee; }
+
+.story__mini { display: none; font-size: 30px; line-height: 1; }
+
+.story__step h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 3.4vw, 44px); letter-spacing: -0.02em; color: var(--text); }
+.story__step .story__card > p:not(.label) { color: var(--text-dim); max-width: 46ch; font-size: 16.5px; }
+
+/* deliverable chips — cascade in when the step activates */
+.story__tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin-top: 2px; }
+.story__tags li {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent-deep); background: var(--bg-2); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 9999px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .5s var(--ease), transform .5s var(--ease), background .3s var(--ease);
+}
+.story__step.is-active .story__tags li { opacity: 1; transform: none; }
+.story__step.is-active .story__tags li:nth-child(1) { transition-delay: .15s; }
+.story__step.is-active .story__tags li:nth-child(2) { transition-delay: .27s; }
+.story__step.is-active .story__tags li:nth-child(3) { transition-delay: .39s; }
+.story__tags li:hover { background: var(--accent-soft); }
 
 @media (max-width: 820px) {
-  .story { grid-template-columns: 1fr; }
+  .story__layout { grid-template-columns: 1fr; }
   .story__sticky { display: none; }
-  .story__step { min-height: auto; padding: 48px 0; opacity: 1; border-bottom: 1px solid var(--border); }
+  .story__steps { padding-left: 40px; }
+  .story__rail { left: 8px; top: 2%; bottom: 2%; }
+  .story__step { min-height: auto; padding: 26px 0; }
+  .story__step::before { left: -39px; }
+  .story__card { opacity: 1; transform: none; }
+  .story__step.is-done .story__card { opacity: 1; transform: none; }
+  .story__mini { display: block; }
+  .story__tags li { opacity: 1; transform: none; }
 }
 
 /* =========================================================
@@ -868,6 +984,10 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   .brand__sub { clip-path: none !important; letter-spacing: 0.26em !important; }
   .shot__img, .shot__layer { transform: none !important; }
   .quotes__track { animation: none !important; flex-wrap: wrap; }
+  .story__blob, .story__stage.is-active { animation: none !important; }
+  .story__card, .story__tags li { opacity: 1 !important; transform: none !important; }
+  .story__arc-fill { stroke-dashoffset: 0 !important; }
+  .story__rail-fill { transform: scaleY(1) !important; }
   .quote[aria-hidden="true"] { display: none; } /* marquee duplicates not needed when static */
   html { scroll-behavior: auto; }
 }

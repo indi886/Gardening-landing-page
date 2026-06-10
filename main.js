@@ -147,25 +147,64 @@
     onParallax();
   }
 
-  /* ---------- Sticky storytelling ---------- */
+  /* ---------- Sticky storytelling — the growth journey ---------- */
   const steps = $$(".story__step");
   const stages = $$(".story__stage");
   if (steps.length && stages.length) {
+    const counterEl = $("#storyCounter");
+    const nameEl = $("#storyStageName");
+    const setStage = (idx) => {
+      steps.forEach((s) => {
+        const i = +s.dataset.step;
+        s.classList.toggle("is-active", i === idx);
+        s.classList.toggle("is-done", i < idx);
+      });
+      stages.forEach((st) => st.classList.toggle("is-active", +st.dataset.stage === idx));
+      if (counterEl) {
+        const next = "0" + (idx + 1);
+        if (counterEl.textContent !== next) {
+          counterEl.textContent = next;
+          counterEl.classList.remove("is-tick");
+          void counterEl.offsetWidth; // restart tick animation
+          counterEl.classList.add("is-tick");
+        }
+      }
+      if (nameEl) nameEl.textContent = steps[idx]?.dataset.name || "";
+    };
     const stepObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
-          const idx = +e.target.dataset.step;
-          steps.forEach((s) => s.classList.toggle("is-active", s === e.target));
-          stages.forEach((st) => st.classList.toggle("is-active", +st.dataset.stage === idx));
+          setStage(+e.target.dataset.step);
         });
       },
-      { threshold: 0.55 }
+      { threshold: window.matchMedia("(max-width: 820px)").matches ? 0.4 : 0.55 }
     );
     steps.forEach((s) => stepObserver.observe(s));
-    // default first stage visible
-    stages[0].classList.add("is-active");
-    steps[0].classList.add("is-active");
+    setStage(0);
+  }
+
+  /* Scroll-driven progress: rail fill + arc around the stage visual */
+  const storySection = $(".story");
+  const railFill = $("#storyRailFill");
+  const arcFill = $("#storyArc");
+  if (storySection && (railFill || arcFill)) {
+    const ARC_LEN = 754; // 2π × r(120)
+    const onStoryScroll = () => {
+      const r = storySection.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      const total = Math.max(r.height - window.innerHeight, 1);
+      const p = clamp(-r.top / total, 0, 1);
+      if (railFill) railFill.style.transform = `scaleY(${p.toFixed(4)})`;
+      if (arcFill) arcFill.style.strokeDashoffset = (ARC_LEN * (1 - p)).toFixed(1);
+    };
+    if (reduce) {
+      if (railFill) railFill.style.transform = "scaleY(1)";
+      if (arcFill) arcFill.style.strokeDashoffset = "0";
+    } else {
+      window.addEventListener("scroll", onStoryScroll, { passive: true });
+      onStoryScroll();
+    }
   }
 
   /* ---------- Animated statistics ---------- */
