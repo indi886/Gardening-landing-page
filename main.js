@@ -1,5 +1,5 @@
 /* =========================================================
-   VERDANT — Interactions
+   PREMIUM FENCING & LANDSCAPING — Interactions
    Scroll reveals · parallax · stagger · sticky storytelling
    · animated stats · magnetic / interactive CTA · floaters
    ========================================================= */

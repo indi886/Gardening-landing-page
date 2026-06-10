@@ -1,5 +1,5 @@
 /* =========================================================
-   VERDANT — Hero motion layer
+   PREMIUM FENCING & LANDSCAPING — Hero motion layer
    Sunlit leaves & grass clippings blow across the hero photo,
    echoing the spray of cuttings behind a mower. Pure canvas 2D,
    DPR-aware, reduced-motion friendly. Sits on top of the photo.

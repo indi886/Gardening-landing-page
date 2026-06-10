@@ -1,7 +1,7 @@
-# VERDANT — Landscape & Garden Studio
+# Premium Fencing & Landscaping
 
-A multi-section, motion-driven landing page for a gardening / landscape
-business. The structure descends from the **"Aether — The New Frontier"**
+A multi-section, motion-driven landing page for a fencing & landscaping
+business (Kings Park, Victoria 3021). The structure descends from the **"Aether — The New Frontier"**
 template, re-skinned into a **light, sunlit-green theme** (soft green
 background, warm sunlight glow, deep-green accents) with JetBrains Mono
 technical labels retained from the original DNA.
