@@ -553,35 +553,92 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .story__step.is-active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 7px rgba(58,143,58,0.18), 0 0 18px rgba(58,143,58,0.55); transform: scale(1.2); }
 .story__step.is-done::before { background: var(--accent-soft); border-color: var(--accent-soft); }
 
-/* the card itself: stateful — upcoming / active / done */
+/* the card itself: stateful — enters with 3D rise, then upcoming / active / done */
+.story__step { perspective: 1200px; }
 .story__card {
   position: relative; padding: clamp(26px, 3vw, 40px);
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
   box-shadow: 0 12px 32px rgba(22,49,15,0.06);
   display: flex; flex-direction: column; gap: 16px;
-  opacity: 0.35; transform: translateY(14px) scale(.985);
-  transition: opacity .55s var(--ease), transform .55s var(--ease), border-color .55s var(--ease), box-shadow .55s var(--ease);
+  transform-style: preserve-3d;
+  /* pre-entrance: low, tipped back, soft focus */
+  opacity: 0; transform: translateY(70px) rotateX(10deg) scale(.96); filter: blur(8px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease),
+              border-color .55s var(--ease), box-shadow .55s var(--ease);
 }
-.story__step.is-active .story__card {
-  opacity: 1; transform: none;
+/* entrance done (seen once) — settles into the resting 'upcoming' pose */
+.story__step.is-seen .story__card { opacity: 0.42; transform: translateY(14px) scale(.985); filter: blur(0); }
+.story__step.is-seen.is-active .story__card {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   border-color: var(--accent-soft);
   box-shadow: 0 30px 70px rgba(31,90,38,0.16), 0 0 0 1px rgba(125,214,106,0.25);
+  transition: opacity .55s var(--ease), transform .18s ease-out, filter .55s var(--ease),
+              border-color .55s var(--ease), box-shadow .55s var(--ease);
 }
-.story__step.is-done .story__card { opacity: 0.55; transform: scale(.985); }
+.story__step.is-seen.is-done .story__card { opacity: 0.55; transform: scale(.985); }
 
-/* giant ghost number behind each card */
+/* inner content cascade — each element rises in sequence after the card lands */
+.story__card .label,
+.story__card h3,
+.story__card > p:not(.label),
+.story__card .story__tags {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.story__step.is-seen .story__card .label              { opacity: 1; transform: none; transition-delay: .18s; }
+.story__step.is-seen .story__card h3                  { opacity: 1; transform: none; transition-delay: .30s; }
+.story__step.is-seen .story__card > p:not(.label)     { opacity: 1; transform: none; transition-delay: .42s; }
+.story__step.is-seen .story__card .story__tags        { opacity: 1; transform: none; transition-delay: .54s; }
+
+/* rotating light that orbits the active card's border */
+@property --story-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.story__card::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px;
+  background: conic-gradient(from var(--story-angle),
+              transparent 0% 30%, rgba(125,214,106,0.9) 46%, #fff 50%,
+              rgba(125,214,106,0.9) 54%, transparent 70% 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .6s var(--ease); pointer-events: none;
+}
+.story__step.is-active .story__card::before { opacity: 1; animation: storyBorderSpin 4.5s linear infinite; }
+@keyframes storyBorderSpin { to { --story-angle: 360deg; } }
+
+/* pointer-tracked spotlight inside the card */
+.story__card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%),
+              rgba(125,214,106,0.16), transparent 65%);
+  opacity: 0; transition: opacity .4s var(--ease);
+}
+.story__step.is-active .story__card:hover::after { opacity: 1; }
+
+/* giant ghost number behind each card — parallax-drifts away from the pointer */
 .story__num {
   position: absolute; top: 6px; right: 18px;
   font-family: var(--font-display); font-weight: 700; font-size: clamp(64px, 7vw, 104px);
   line-height: 1; letter-spacing: -0.04em; color: var(--bg);
   -webkit-text-stroke: 1.5px var(--border); pointer-events: none;
+  transform: translate(calc(var(--ry, 0deg) * -2.2), calc(var(--rx, 0deg) * 2.2)) translateZ(40px);
   transition: -webkit-text-stroke-color .5s var(--ease), color .5s var(--ease);
 }
 .story__step.is-active .story__num { -webkit-text-stroke-color: var(--accent-soft); color: #f4f9ee; }
 
 .story__mini { display: none; font-size: 30px; line-height: 1; }
 
-.story__step h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 3.4vw, 44px); letter-spacing: -0.02em; color: var(--text); }
+.story__step h3 {
+  position: relative; font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(26px, 3.4vw, 44px); letter-spacing: -0.02em; color: var(--text);
+  width: fit-content;
+}
+/* underline draws itself when the step takes focus */
+.story__step h3::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; height: 3px; width: 0;
+  border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  transition: width .7s var(--ease) .15s;
+}
+.story__step.is-active h3::after { width: 56px; }
 .story__step .story__card > p:not(.label) { color: var(--text-dim); max-width: 46ch; font-size: 16.5px; }
 
 /* deliverable chips — cascade in when the step activates */
@@ -597,17 +654,18 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .story__step.is-active .story__tags li:nth-child(1) { transition-delay: .15s; }
 .story__step.is-active .story__tags li:nth-child(2) { transition-delay: .27s; }
 .story__step.is-active .story__tags li:nth-child(3) { transition-delay: .39s; }
-.story__tags li:hover { background: var(--accent-soft); }
+.story__tags li:hover { background: var(--accent-soft); transform: translateY(-2px); box-shadow: 0 6px 14px rgba(58,143,58,0.22); cursor: default; }
 
 @media (max-width: 820px) {
   .story__layout { grid-template-columns: 1fr; }
   .story__sticky { display: none; }
   .story__steps { padding-left: 40px; }
   .story__rail { left: 8px; top: 2%; bottom: 2%; }
-  .story__step { min-height: auto; padding: 26px 0; }
+  .story__step { min-height: auto; padding: 26px 0; perspective: none; }
   .story__step::before { left: -39px; }
-  .story__card { opacity: 1; transform: none; }
-  .story__step.is-done .story__card { opacity: 1; transform: none; }
+  /* entrance still plays; once seen, cards sit at full strength (no dim states) */
+  .story__step.is-seen .story__card,
+  .story__step.is-seen.is-done .story__card { opacity: 1; transform: none; }
   .story__mini { display: block; }
   .story__tags li { opacity: 1; transform: none; }
 }
@@ -985,7 +1043,9 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   .shot__img, .shot__layer { transform: none !important; }
   .quotes__track { animation: none !important; flex-wrap: wrap; }
   .story__blob, .story__stage.is-active { animation: none !important; }
-  .story__card, .story__tags li { opacity: 1 !important; transform: none !important; }
+  .story__card, .story__tags li { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .story__card .label, .story__card h3, .story__card > p:not(.label), .story__card .story__tags { opacity: 1 !important; transform: none !important; }
+  .story__card::before { animation: none !important; }
   .story__arc-fill { stroke-dashoffset: 0 !important; }
   .story__rail-fill { transform: scaleY(1) !important; }
   .quote[aria-hidden="true"] { display: none; } /* marquee duplicates not needed when static */

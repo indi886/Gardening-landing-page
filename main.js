@@ -182,6 +182,39 @@
     );
     steps.forEach((s) => stepObserver.observe(s));
     setStage(0);
+
+    /* One-time entrance: card rises in 3D + content cascades, first scroll into view */
+    const seenObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("is-seen");
+          seenObserver.unobserve(e.target);
+        });
+      },
+      { threshold: 0.25, rootMargin: "0px 0px -6% 0px" }
+    );
+    steps.forEach((s) => seenObserver.observe(s));
+
+    /* Micro-interactions: pointer-tracked spotlight + gentle 3D tilt
+       (the ghost number counter-drifts off the same --rx/--ry vars) */
+    if (!reduce && window.matchMedia("(pointer: fine)").matches) {
+      $$(".story__card").forEach((card) => {
+        card.addEventListener("pointermove", (e) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+          card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+          card.style.setProperty("--rx", ((py - 0.5) * -3.2).toFixed(2) + "deg");
+          card.style.setProperty("--ry", ((px - 0.5) * 3.2).toFixed(2) + "deg");
+        });
+        card.addEventListener("pointerleave", () => {
+          card.style.setProperty("--rx", "0deg");
+          card.style.setProperty("--ry", "0deg");
+        });
+      });
+    }
   }
 
   /* Scroll-driven progress: rail fill + arc around the stage visual */
