@@ -9,11 +9,31 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+  <!-- Social / SEO -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="VERDANT — Landscape & Garden Studio" />
+  <meta property="og:description" content="We grow dreams into beautiful living spaces. Design, planting, and care — engineered like a frontier." />
+  <meta property="og:image" content="assets/hero.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80' fill='%233a8f3a'%3E✦%3C/text%3E%3C/svg%3E" />
+  <link rel="preload" as="image" href="assets/hero.jpg" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "VERDANT Landscape & Garden Studio",
+    "description": "Garden design, planting, irrigation, lawn care and tree work.",
+    "areaServed": "Your region",
+    "knowsAbout": ["Garden design", "Landscaping", "Irrigation", "Lawn care"]
+  }
+  </script>
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <!-- ============ FLOATING BACKGROUND LAYER ============ -->
   <div class="bg-field" aria-hidden="true">
     <span class="orb orb--1"></span>
@@ -41,7 +61,22 @@
       <a href="#contact">Contact</a>
     </nav>
     <a href="#contact" class="btn btn--ghost nav__cta">Start a project</a>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span>
+    </button>
   </header>
+
+  <!-- Mobile menu drawer -->
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile" hidden>
+    <a href="#work">Work</a>
+    <a href="#process">Process</a>
+    <a href="#stats">Studio</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+    <a href="#contact" class="btn btn--solid">Start a project</a>
+  </nav>
+
+  <main id="main">
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="top">
@@ -298,6 +333,81 @@
     </div>
   </section>
 
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="quotes reveal-section" id="voices">
+    <div class="quotes__head">
+      <p class="label"><span class="label__dot"></span> 07-G. KIND WORDS</p>
+      <h2 class="quotes__title">Gardens speak.<br />So do <em>their people</em>.</h2>
+    </div>
+    <div class="quotes__rail" aria-label="Client testimonials">
+      <div class="quotes__track">
+        <figure class="quote">
+          <blockquote>"They didn't just landscape the garden — they understood how we wanted to live in it. Two years on, it keeps getting better."</blockquote>
+          <figcaption><span>Sarah & Tom Whitfield</span><small>Hillside Retreat</small></figcaption>
+        </figure>
+        <figure class="quote">
+          <blockquote>"The before/after is genuinely shocking. Friends ask if we moved house. The crew was precise, tidy, and fast."</blockquote>
+          <figcaption><span>Daniel Okafor</span><small>Courtyard Garden</small></figcaption>
+        </figure>
+        <figure class="quote">
+          <blockquote>"VERDANT's planting plan means something is in flower every single month. It's a calendar made of petals."</blockquote>
+          <figcaption><span>Mei-Ling Chau</span><small>Seasonal Borders</small></figcaption>
+        </figure>
+        <figure class="quote">
+          <blockquote>"Smart irrigation halved our water bill and the lawn has never looked richer. Engineering and gardening in one team."</blockquote>
+          <figcaption><span>Priya Raman</span><small>Terraced Slope</small></figcaption>
+        </figure>
+        <!-- duplicate set for seamless marquee loop -->
+        <figure class="quote" aria-hidden="true">
+          <blockquote>"They didn't just landscape the garden — they understood how we wanted to live in it. Two years on, it keeps getting better."</blockquote>
+          <figcaption><span>Sarah & Tom Whitfield</span><small>Hillside Retreat</small></figcaption>
+        </figure>
+        <figure class="quote" aria-hidden="true">
+          <blockquote>"The before/after is genuinely shocking. Friends ask if we moved house. The crew was precise, tidy, and fast."</blockquote>
+          <figcaption><span>Daniel Okafor</span><small>Courtyard Garden</small></figcaption>
+        </figure>
+        <figure class="quote" aria-hidden="true">
+          <blockquote>"VERDANT's planting plan means something is in flower every single month. It's a calendar made of petals."</blockquote>
+          <figcaption><span>Mei-Ling Chau</span><small>Seasonal Borders</small></figcaption>
+        </figure>
+        <figure class="quote" aria-hidden="true">
+          <blockquote>"Smart irrigation halved our water bill and the lawn has never looked richer. Engineering and gardening in one team."</blockquote>
+          <figcaption><span>Priya Raman</span><small>Terraced Slope</small></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq reveal-section" id="faq">
+    <div class="faq__head">
+      <p class="label"><span class="label__dot"></span> 08-H. GOOD QUESTIONS</p>
+      <h2 class="faq__title">Before you <em>dig in</em>.</h2>
+    </div>
+    <div class="faq__list">
+      <details class="faq__item">
+        <summary>How long does a full garden transformation take?<span class="faq__marker" aria-hidden="true">+</span></summary>
+        <p>Most projects run 6–12 weeks from first survey to final planting, depending on scale and season. Design takes 2–3 weeks; the build is staged so you always have usable outdoor space.</p>
+      </details>
+      <details class="faq__item">
+        <summary>Do you work with existing gardens or only blank slates?<span class="faq__marker" aria-hidden="true">+</span></summary>
+        <p>Both. Some of our favourite work edits what's already growing — keeping mature trees and good bones, then rebuilding structure, soil and planting around them.</p>
+      </details>
+      <details class="faq__item">
+        <summary>What does ongoing care include?<span class="faq__marker" aria-hidden="true">+</span></summary>
+        <p>Seasonal pruning, feeding, lawn programmes, irrigation tuning and replanting where needed. You'll have a dedicated crew who knows your garden by name.</p>
+      </details>
+      <details class="faq__item">
+        <summary>Can you work to a fixed budget?<span class="faq__marker" aria-hidden="true">+</span></summary>
+        <p>Yes — we design to the budget, not past it. The master plan can also be phased over several seasons so the garden grows as you do.</p>
+      </details>
+      <details class="faq__item">
+        <summary>Do you offer just the design, without the build?<span class="faq__marker" aria-hidden="true">+</span></summary>
+        <p>We do. You'll receive full drawings, planting plans and specifications that any competent contractor can build from — though we'd love to build it with you.</p>
+      </details>
+    </div>
+  </section>
+
   <!-- ============ INTERACTIVE CTA ============ -->
   <section class="cta" id="contact">
     <div class="cta__card" id="ctaCard">
@@ -320,14 +430,43 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="footer__top">
-      <span class="nav__name">VERDANT</span>
-      <p>Crafting experiences that elevate, engage, and resonate — bridging the space between bold concepts and living reality.</p>
+      <div class="footer__brand">
+        <span class="nav__name">VERDANT</span>
+        <p>Crafting experiences that elevate, engage, and resonate — bridging the space between bold concepts and living reality.</p>
+      </div>
+      <nav class="footer__col" aria-label="Footer — Studio">
+        <span class="footer__col-title">Studio</span>
+        <a href="#work">Work</a>
+        <a href="#process">Process</a>
+        <a href="#stats">By the numbers</a>
+        <a href="#voices">Kind words</a>
+      </nav>
+      <nav class="footer__col" aria-label="Footer — Services">
+        <span class="footer__col-title">Services</span>
+        <a href="#work">Garden design</a>
+        <a href="#work">Planting</a>
+        <a href="#work">Irrigation</a>
+        <a href="#work">Lawn &amp; care</a>
+      </nav>
+      <div class="footer__col">
+        <span class="footer__col-title">Say hello</span>
+        <a href="mailto:hello@verdant.studio">hello@verdant.studio</a>
+        <a href="tel:+10000000000">+1 (000) 000-0000</a>
+        <div class="footer__social">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Pinterest">PI</a>
+          <a href="#" aria-label="Houzz">HZ</a>
+        </div>
+      </div>
     </div>
     <div class="footer__bottom">
       <span class="label">© 2025 VERDANT STUDIO // ALL SEASONS RESERVED</span>
+      <a class="footer__top-link" href="#top">Back to top ↑</a>
       <span class="label">DESIGN • PLANT • NURTURE • THRIVE</span>
     </div>
   </footer>

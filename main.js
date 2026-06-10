@@ -253,7 +253,12 @@
       if (!form.checkValidity()) { form.reportValidity(); return; }
       const success = $("#ctaSuccess");
       const btn = $(".cta__submit", form);
-      if (btn) { btn.querySelector("span").textContent = "Planted ✦"; }
+      if (btn) {
+        const label = btn.querySelector("span");
+        label.textContent = "Planted ✦";
+        btn.disabled = true;
+        setTimeout(() => { label.textContent = "Send the brief"; btn.disabled = false; }, 4000);
+      }
       if (success) success.hidden = false;
       form.querySelectorAll("input").forEach((i) => (i.value = ""));
     });
@@ -281,6 +286,45 @@
       range.addEventListener("pointercancel", () => { dragging = false; });
       range.addEventListener("input", () => set(range.value)); // keyboard arrows
     }
+  }
+
+  /* ---------- Mobile menu ---------- */
+  const burger = $("#navBurger");
+  const mobileMenu = $("#mobileMenu");
+  if (burger && mobileMenu) {
+    mobileMenu.hidden = false; // CSS handles visibility; keep in a11y tree only when open
+    const setMenu = (open) => {
+      burger.setAttribute("aria-expanded", String(open));
+      burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      mobileMenu.classList.toggle("is-open", open);
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    burger.addEventListener("click", () =>
+      setMenu(burger.getAttribute("aria-expanded") !== "true"));
+    mobileMenu.addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+  }
+
+  /* ---------- Scrollspy: highlight nav link for section in view ---------- */
+  const navLinks = $$(".nav__links a");
+  if (navLinks.length) {
+    const byHash = new Map(navLinks.map((a) => [a.getAttribute("href"), a]));
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const link = byHash.get("#" + e.target.id);
+          if (!link) return;
+          if (e.isIntersecting) {
+            navLinks.forEach((a) => a.classList.toggle("is-active", a === link));
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+    navLinks.forEach((a) => {
+      const target = $(a.getAttribute("href"));
+      if (target) spy.observe(target);
+    });
   }
 
   /* ---------- Floating spores / drifting leaves ---------- */
