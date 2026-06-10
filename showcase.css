@@ -1,0 +1,191 @@
+/* =========================================================
+   SHOWCASE — Animated continuous sections (GSAP Observer)
+   Standalone immersive projects experience.
+   ========================================================= */
+:root {
+  --accent: #2f7d3a;
+  --accent-soft: #7dd66a;
+  --accent-deep: #1f5a26;
+  --ink: #0f1c0c;
+  --paper: #eaf3df;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+  --font-serif: "Fraunces", "Georgia", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; width: 100%;
+  background: #07120a; color: #fff;
+  font-family: var(--font-display);
+  overflow: hidden;                 /* Observer drives navigation, not scroll */
+  overscroll-behavior: none;
+}
+body { -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+
+.skip-link {
+  position: fixed; left: 12px; top: -60px; z-index: 100;
+  background: #fff; color: var(--ink); padding: 10px 16px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; transition: top .2s var(--ease);
+}
+.skip-link:focus { top: 12px; }
+
+/* ---------- Stage & sections ---------- */
+.ts-section {
+  position: fixed; inset: 0;
+  visibility: hidden;               /* gsap autoAlpha toggles this */
+  width: 100%; height: 100%;
+}
+.ts-outer, .ts-inner { width: 100%; height: 100%; overflow: hidden; }
+.ts-bg {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: clamp(28px, 7vw, 110px);
+  background-size: cover; background-position: center;
+  background-repeat: no-repeat;
+}
+/* legibility scrim */
+.ts-bg::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6,16,8,0.50) 0%, transparent 26%),
+    linear-gradient(0deg, rgba(5,14,7,0.86) 0%, rgba(6,16,8,0.30) 42%, transparent 70%);
+}
+.ts-content { position: relative; z-index: 2; max-width: 1100px; }
+
+/* per-section content */
+.ts-eyebrow {
+  font-family: var(--font-mono); font-size: clamp(11px, 1.1vw, 13px);
+  letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent-soft);
+  display: flex; align-items: center; gap: 12px; margin: 0 0 14px;
+}
+.ts-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--accent-soft); display: inline-block; }
+.ts-heading {
+  font-family: var(--font-display); font-weight: 700; line-height: 0.98;
+  font-size: clamp(40px, 9vw, 132px); letter-spacing: -0.02em; margin: 0;
+}
+.ts-heading em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color: var(--accent-soft); }
+.ts-sub {
+  margin: 18px 0 0; max-width: 46ch; font-size: clamp(15px, 1.5vw, 20px);
+  color: rgba(255,255,255,0.78); line-height: 1.5;
+}
+/* per-character split spans */
+.ts-char { display: inline-block; will-change: transform; }
+.ts-word { display: inline-block; white-space: nowrap; }
+
+/* giant ghost index number */
+.ts-num {
+  position: absolute; top: clamp(80px, 14vh, 150px); right: clamp(20px, 5vw, 80px);
+  z-index: 2; font-family: var(--font-mono); font-weight: 600;
+  font-size: clamp(60px, 16vw, 200px); line-height: 1; color: rgba(255,255,255,0.10);
+  letter-spacing: -0.04em; pointer-events: none;
+}
+
+/* ---------- Cover (first panel) ---------- */
+.ts-cover .ts-bg {
+  justify-content: center; align-items: flex-start;
+  background-image:
+    radial-gradient(120% 90% at 20% 20%, rgba(125,214,106,0.20), transparent 55%),
+    linear-gradient(160deg, var(--accent-deep), #0c2c12 70%);
+}
+.ts-cover .ts-bg::after { background: none; }
+.ts-cover .ts-heading { font-size: clamp(48px, 12vw, 168px); }
+.ts-cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.ts-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px; border-radius: 100px; font-weight: 600; font-size: 14px;
+  text-decoration: none; border: 1px solid rgba(255,255,255,0.28);
+  transition: transform .25s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
+}
+.ts-btn--solid { background: var(--accent-soft); color: var(--ink); border-color: var(--accent-soft); }
+.ts-btn:hover { transform: translateY(-2px); background: #fff; color: var(--ink); border-color: #fff; }
+.ts-btn:active { transform: scale(0.96); }
+
+/* ---------- Fixed chrome (header / nav / counter / hint) ---------- */
+.sc-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: clamp(18px, 3vw, 30px) clamp(20px, 5vw, 64px);
+  pointer-events: none;
+}
+.sc-header > * { pointer-events: auto; }
+.sc-brand { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.22em; font-size: 14px; }
+.sc-brand span { color: var(--accent-soft); }
+.sc-back {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border: 1px solid rgba(255,255,255,0.24); border-radius: 100px;
+  transition: background .3s var(--ease), transform .25s var(--ease);
+}
+.sc-back:hover { background: rgba(255,255,255,0.12); transform: translateX(-2px); }
+
+/* dot nav */
+.sc-dots {
+  position: fixed; z-index: 40; right: clamp(16px, 3vw, 40px); top: 50%;
+  transform: translateY(-50%); display: flex; flex-direction: column; gap: 14px;
+}
+.sc-dot {
+  width: 11px; height: 11px; padding: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; border: 1.5px solid rgba(255,255,255,0.45);
+  transition: background .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease);
+}
+.sc-dot:hover { border-color: #fff; transform: scale(1.2); }
+.sc-dot.is-active { background: var(--accent-soft); border-color: var(--accent-soft); transform: scale(1.15); }
+
+/* counter */
+.sc-counter {
+  position: fixed; z-index: 40; left: clamp(20px, 5vw, 64px); bottom: clamp(20px, 4vw, 42px);
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; color: rgba(255,255,255,0.7);
+}
+.sc-counter b { color: #fff; font-size: 20px; }
+
+/* hint */
+.sc-hint {
+  position: fixed; z-index: 40; left: 50%; bottom: clamp(20px, 4vw, 42px);
+  transform: translateX(-50%); display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6); transition: opacity .6s var(--ease);
+}
+.sc-hint .sc-wheel {
+  width: 22px; height: 34px; border: 1.5px solid rgba(255,255,255,0.5); border-radius: 12px;
+  position: relative;
+}
+.sc-hint .sc-wheel::after {
+  content: ""; position: absolute; top: 6px; left: 50%; width: 3px; height: 6px; border-radius: 2px;
+  background: #fff; transform: translateX(-50%); animation: scWheel 1.6s var(--ease) infinite;
+}
+@keyframes scWheel { 0%{opacity:0;transform:translate(-50%,0)} 30%{opacity:1} 100%{opacity:0;transform:translate(-50%,12px)} }
+.sc-hint.is-hidden { opacity: 0; pointer-events: none; }
+
+/* loading state until JS reveals first section */
+.is-loading .ts-section { visibility: hidden; }
+.sc-loader {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center;
+  background: #07120a; transition: opacity .5s var(--ease);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.2em; color: var(--accent-soft);
+}
+.sc-loader.is-gone { opacity: 0; pointer-events: none; }
+
+@media (max-width: 640px) {
+  .sc-dots { right: 12px; gap: 11px; }
+  .ts-num { top: 84px; }
+  .sc-hint span { display: none; }
+}
+
+/* =========================================================
+   FALLBACK — if GSAP fails to load, become a normal
+   scrollable stacked page so content is never lost.
+   ========================================================= */
+.no-gsap, .no-gsap body { overflow: auto !important; height: auto !important; }
+.no-gsap .sc-loader, .no-gsap .sc-hint, .no-gsap .sc-dots { display: none !important; }
+.no-gsap .ts-section { position: relative !important; visibility: visible !important; height: 100vh; }
+.no-gsap .ts-char, .no-gsap .ts-content { opacity: 1 !important; transform: none !important; }
+
+/* =========================================================
+   REDUCED MOTION — keep navigation, drop the heavy parallax
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .sc-hint .sc-wheel::after { animation: none; }
+}
