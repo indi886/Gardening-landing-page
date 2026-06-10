@@ -38,10 +38,12 @@
       curtain.addEventListener("transitionend", () => curtain.classList.add("is-done"), { once: true });
       setTimeout(() => curtain.classList.add("is-done"), 1200); // safety net
     };
-    if (reduce || sessionStorage.getItem("introSeen")) {
+    // sessionStorage can throw when storage is blocked — never let it halt the page
+    let seen = false;
+    try { seen = !!sessionStorage.getItem("introSeen"); sessionStorage.setItem("introSeen", "1"); } catch (e) {}
+    if (reduce || seen) {
       curtain.classList.add("is-done"); // no theatre on repeat visits / reduced motion
     } else {
-      sessionStorage.setItem("introSeen", "1");
       window.addEventListener("load", () => setTimeout(dismiss, 1400));
       setTimeout(dismiss, 2600); // safety if load is slow
     }
@@ -121,10 +123,27 @@
     { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
   );
   const hero = $(".hero");
-  $$(".reveal-section, .reveal, .wipe, .slide-l, .slide-r, .reveal-img").forEach((el) => {
+  const revealEls = $$(".reveal-section, .reveal, .wipe, .slide-l, .slide-r, .reveal-img");
+  revealEls.forEach((el) => {
     if (el.classList.contains("reveal") && hero && hero.contains(el)) return; // hero handled separately
     revealObserver.observe(el);
   });
+  /* Safety net: never let a missed observer callback (instant anchor jumps,
+     fast scroll) leave reveal content permanently clipped/invisible. Any
+     reveal element that is in view gets shown directly via the scroll loop. */
+  let pendingReveal = revealEls.filter((el) => !(el.classList.contains("reveal") && hero && hero.contains(el)));
+  const revealInView = () => {
+    if (!pendingReveal.length) return;
+    const vh = window.innerHeight;
+    pendingReveal = pendingReveal.filter((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.96 && r.bottom > 0) { el.classList.add("is-in"); return false; }
+      return true;
+    });
+  };
+  scrollFns.push(revealInView);
+  window.addEventListener("load", revealInView);
+  revealInView();
 
   /* ---------- Staggered cards / stats ---------- */
   const staggerObserver = new IntersectionObserver(
