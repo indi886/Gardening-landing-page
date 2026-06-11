@@ -922,6 +922,10 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .reveal-section.is-in .label, .reveal-section.is-in h2 { opacity: 1; transform: none; }
 .stagger { opacity: 0; transform: translateY(36px) scale(0.98); transition: opacity .7s var(--ease), transform .7s var(--ease); }
 .stagger.is-in { opacity: 1; transform: none; }
+/* GSAP ScrollTrigger owns the bento cards (cards.js): drop the CSS reveal
+   so its transition doesn't fight scrub-driven inline styles. */
+.bento--gsap .stagger { opacity: 1; transform: none; transition: none; }
+.bento--gsap .card { will-change: transform; }
 .hero .reveal { transition-delay: 0.05s; }
 
 /* =========================================================

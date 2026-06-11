@@ -160,7 +160,11 @@
     },
     { threshold: 0.2 }
   );
-  $$(".bento__grid, .stats__grid").forEach((g) => staggerObserver.observe(g));
+  $$(".bento__grid, .stats__grid").forEach((g) => {
+    // cards.js (GSAP ScrollTrigger) owns the bento cards when the CDN loaded
+    if (g.classList.contains("bento__grid") && window.gsap && window.ScrollTrigger) return;
+    staggerObserver.observe(g);
+  });
 
   /* ---------- Intro: word-by-word reveal tied to scroll ---------- */
   const words = $$(".intro__statement .word");
