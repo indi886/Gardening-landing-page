@@ -51,7 +51,7 @@
   document.documentElement.addEventListener("mouseenter", () => root.classList.add("is-active"));
 
   // ---- Contextual states (delegated; robust against injected nodes) ----
-  const GROW = ".btn, .magnetic, .nav__links a, .mobile-menu a, .sc-back, .sc-dot, .lightbox__close, .lightbox__nav, summary";
+  const GROW = ".btn, .magnetic, .nav__links a, .mobile-menu a, .social-links a, .footer__col a, .footer__contact, .sc-back, .sc-dot, .lightbox__close, .lightbox__nav, summary";
   const setState = (cls, text) => {
     root.classList.remove("is-grow", "is-view", "is-drag", "is-hidden");
     if (cls) root.classList.add(cls);

@@ -15,7 +15,7 @@
 
   const isInternal = (url) =>
     url.origin === location.origin &&
-    /(?:^|\/)(index|showcase)\.html$/.test(url.pathname) &&
+    /(?:^|\/)(index|showcase|about)\.html$/.test(url.pathname) &&
     url.pathname !== location.pathname;
 
   function getOverlay() {
@@ -36,7 +36,14 @@
   function playOutro(href) {
     if (reduce) { location.href = href; return; }
     window.dispatchEvent(new Event("page:leaving")); // main.js halts Lenis inertia
-    try { sessionStorage.setItem("pageTransition", "1"); } catch (e) {} // force destination curtain
+    try {
+      sessionStorage.setItem("pageTransition", "1"); // force destination curtain
+      // Carry a target section hash across the navigation so cross-page nav
+      // (e.g. About → "Work") lands on the section despite scroll-to-top.
+      const hash = new URL(href, location.href).hash;
+      if (hash && hash.length > 1) sessionStorage.setItem("transitionHash", hash);
+      else sessionStorage.removeItem("transitionHash");
+    } catch (e) {}
     const c = getOverlay();
     void c.offsetWidth;                              // commit the collapsed start state
     c.classList.add("is-covering");

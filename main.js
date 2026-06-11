@@ -19,6 +19,23 @@
   window.addEventListener("DOMContentLoaded", toTop);
   window.addEventListener("load", toTop);    // after images/hash settle
 
+  /* If we arrived via the branded page transition with a target section
+     (e.g. About → "Work"), scroll to it after the top-reset settles. */
+  window.addEventListener("load", () => {
+    let hash = "";
+    try { hash = sessionStorage.getItem("transitionHash") || ""; if (hash) sessionStorage.removeItem("transitionHash"); } catch (e) {}
+    if (!hash) return;
+    const target = document.querySelector(hash);
+    if (!target) return;
+    // Wait past the destination curtain lift (~1.4s); force is needed because
+    // Lenis is stopped while the curtain is up.
+    setTimeout(() => {
+      const offset = -(document.getElementById("nav")?.offsetHeight || 0) - 8;
+      if (lenis) lenis.scrollTo(target, { offset, force: true });
+      else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    }, 1600);
+  });
+
   /* ---------- Single rAF-batched scroll dispatcher ----------
      All scroll work funnels through one passive listener + one rAF per frame,
      instead of three separate listeners each reading layout on every tick. */
@@ -222,7 +239,7 @@
     },
     { threshold: 0.2 }
   );
-  $$(".bento__grid, .stats__grid").forEach((g) => {
+  $$(".bento__grid, .stats__grid, .about-team__grid, .about-values__grid").forEach((g) => {
     // cards.js (GSAP ScrollTrigger) owns the bento cards when the CDN loaded
     if (g.classList.contains("bento__grid") && window.gsap && window.ScrollTrigger) return;
     staggerObserver.observe(g);

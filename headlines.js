@@ -48,27 +48,31 @@
   const SELECTORS = [
     ".parallax__title", ".story__heading", ".work__title",
     ".ba-title", ".quotes__title", ".faq__title", ".cta__title",
+    ".kinetic", // generic opt-in hook (used by the About page)
   ];
 
+  const seen = new Set();
   SELECTORS.forEach((sel) => {
-    const heading = document.querySelector(sel);
-    if (!heading) return;
-    heading.classList.add("kt-on"); // neutralizes the inherited CSS reveal/wipe (see styles.css)
-    const chars = splitHeading(heading);
-    if (!chars.length) return;
+    document.querySelectorAll(sel).forEach((heading) => {
+      if (seen.has(heading)) return; // a heading may match more than one selector
+      seen.add(heading);
+      heading.classList.add("kt-on"); // neutralizes the inherited CSS reveal/wipe (see styles.css)
+      const chars = splitHeading(heading);
+      if (!chars.length) return;
 
-    gsap.set(chars, { yPercent: 110, opacity: 0 });
-    ST.create({
-      trigger: heading,
-      start: "top 85%",
-      once: true, // play once, never reverse — calm and deliberate
-      onEnter: () => gsap.to(chars, {
-        yPercent: 0,
-        opacity: 1,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: { each: 0.018, from: "start" },
-      }),
+      gsap.set(chars, { yPercent: 110, opacity: 0 });
+      ST.create({
+        trigger: heading,
+        start: "top 85%",
+        once: true, // play once, never reverse — calm and deliberate
+        onEnter: () => gsap.to(chars, {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          stagger: { each: 0.018, from: "start" },
+        }),
+      });
     });
   });
 
