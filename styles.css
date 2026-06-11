@@ -1146,6 +1146,58 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 @keyframes curtainWord { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .curtain.is-done { display: none; }
 
+/* Page-transition outro: curtain drops down to cover, then we navigate. */
+.curtain--gen { clip-path: inset(0 0 100% 0); } /* generated overlay starts collapsed */
+.curtain--gen .curtain__word { animation: none; opacity: 1; } /* brand visible immediately */
+.curtain.is-covering { display: grid; animation: curtainDrop 0.55s var(--ease) both; }
+@keyframes curtainDrop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* =========================================================
+   LENIS SMOOTH SCROLL (vendored; main.js drives it)
+   ========================================================= */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* =========================================================
+   CUSTOM CURSOR (cursor.js)
+   ========================================================= */
+.cursor { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+  mix-blend-mode: difference; opacity: 0; transition: opacity 0.3s var(--ease); }
+.cursor.is-active { opacity: 1; }
+.cursor__ring, .cursor__dot { position: fixed; top: 0; left: 0; }
+.cursor__ring { width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 1.5px solid #fff;
+  border-radius: 50%; transition: width 0.28s var(--ease), height 0.28s var(--ease),
+  margin 0.28s var(--ease), background 0.28s var(--ease), border-color 0.28s var(--ease); }
+.cursor__dot { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: #fff; border-radius: 50%;
+  transition: opacity 0.2s var(--ease); }
+.cursor__label { position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-weight: 600; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity 0.2s var(--ease); }
+.cursor.is-grow .cursor__ring { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+.cursor.is-grow .cursor__dot { opacity: 0; }
+.cursor.is-view .cursor__ring, .cursor.is-drag .cursor__ring {
+  width: 66px; height: 66px; margin: -33px 0 0 -33px; background: rgba(255,255,255,0.14); }
+.cursor.is-view .cursor__dot, .cursor.is-drag .cursor__dot { opacity: 0; }
+.cursor.is-view .cursor__label, .cursor.is-drag .cursor__label { opacity: 1; }
+.cursor.is-hidden { opacity: 0; }
+html.has-custom-cursor, html.has-custom-cursor * { cursor: none !important; }
+html.has-custom-cursor :where(input, textarea, select, [contenteditable]) { cursor: auto !important; }
+@media (pointer: coarse) { .cursor { display: none; } }
+
+/* =========================================================
+   KINETIC HEADLINES (headlines.js) — neutralize inherited reveal
+   so GSAP owns these headings without double-animating.
+   ========================================================= */
+.reveal-section .kt-on, .reveal-section.is-in .kt-on { opacity: 1 !important; transform: none !important; }
+.kt-on.wipe { clip-path: none !important; -webkit-clip-path: none !important; transition: none !important; }
+.kt-on .ts-word { display: inline-block; overflow: hidden; vertical-align: top; }
+.kt-on .ts-char { display: inline-block; will-change: transform; }
+
+/* Native cross-document view transitions where supported (progressive) */
+@view-transition { navigation: auto; }
+
 /* =========================================================
    PROJECT LIGHTBOX
    ========================================================= */
@@ -1219,5 +1271,8 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   .curtain__leaf, .curtain__word { opacity: 1 !important; animation: none !important; }
   .lightbox, .lightbox__img { transition: none !important; }
   .lightbox.vt-active .lightbox__img { view-transition-name: none !important; }
+  .cursor { display: none !important; }                 /* custom cursor never builds, but guard anyway */
+  .kt-on .ts-char { opacity: 1 !important; transform: none !important; } /* headlines stay static */
+  .curtain.is-covering { animation: none !important; }  /* page-transition curtain is skipped */
   html { scroll-behavior: auto; }
 }

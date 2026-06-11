@@ -8,12 +8,13 @@
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+  let lenis = null; // assigned below when smooth scroll is enabled; read lazily by closures
 
   /* ---------- Always open/reload at the hero (top) ----------
      Stop the browser restoring the last scroll position (common on
      mobile reloads) and override any landing #hash jump on first load. */
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  const toTop = () => window.scrollTo(0, 0);
+  const toTop = () => { if (lenis) lenis.scrollTo(0, { immediate: true }); else window.scrollTo(0, 0); };
   toTop();                                   // before paint
   window.addEventListener("DOMContentLoaded", toTop);
   window.addEventListener("load", toTop);    // after images/hash settle
@@ -28,6 +29,57 @@
     if (!scrollTicking) { scrollTicking = true; requestAnimationFrame(runScrollFns); }
   }, { passive: true });
 
+  /* ---------- Lenis smooth inertia scroll + velocity FX ----------
+     Lenis drives the REAL document scroll position, so the dispatcher above
+     and every window.scrollY read keep working untouched. Disabled for
+     reduced-motion (native scroll) and if the vendored lib is missing. */
+  if (!reduce && window.Lenis) {
+    const gsap = window.gsap, ST = window.ScrollTrigger;
+    lenis = new Lenis({
+      duration: 1.05,                                          // refined, not floaty
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out
+      smoothWheel: true,
+      smoothTouch: false,                                      // keep native touch
+      lerp: 0.1,
+    });
+
+    // Canonical Lenis ↔ ScrollTrigger ↔ gsap.ticker wiring
+    if (ST) lenis.on("scroll", ST.update);
+    if (gsap) {
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    }
+
+    // Smooth in-page anchor navigation (one delegated listener covers nav,
+    // mobile menu, hero scroll-prompt and footer back-to-top).
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const hash = a.getAttribute("href");
+      if (hash === "#" || hash === "#top") { e.preventDefault(); lenis.scrollTo(0); return; }
+      const target = document.querySelector(hash);
+      if (!target) return;                                     // unknown hashes pass through
+      e.preventDefault();
+      const navEl = document.getElementById("nav");
+      lenis.scrollTo(target, { offset: navEl ? -(navEl.offsetHeight + 8) : 0 });
+    });
+
+    // Tasteful velocity skew on the page content (settles to 0 as velocity drops)
+    if (gsap) {
+      const skewTo = gsap.quickTo("#main", "skewY", { duration: 0.35, ease: "power3" });
+      lenis.on("scroll", ({ velocity }) => skewTo(Math.max(-1.4, Math.min(1.4, velocity * 0.05))));
+    }
+
+    // Realign ScrollTrigger positions once images/fonts settle
+    window.addEventListener("load", () => { if (window.ScrollTrigger) window.ScrollTrigger.refresh(); });
+
+    // The page-transition module (transition.js) asks us to halt inertia before leaving
+    window.addEventListener("page:leaving", () => { if (lenis) lenis.stop(); });
+  }
+
   /* ---------- Page-load brand curtain (once per session) ---------- */
   const curtain = $("#introCurtain");
   if (curtain) {
@@ -35,18 +87,28 @@
     const dismiss = () => {
       if (dismissed) return; dismissed = true;
       curtain.classList.add("is-lifting");
+      if (lenis) lenis.start();                                // resume inertia on lift
       curtain.addEventListener("transitionend", () => curtain.classList.add("is-done"), { once: true });
       setTimeout(() => curtain.classList.add("is-done"), 1200); // safety net
     };
     // sessionStorage can throw when storage is blocked — never let it halt the page
-    let seen = false;
-    try { seen = !!sessionStorage.getItem("introSeen"); sessionStorage.setItem("introSeen", "1"); } catch (e) {}
-    if (reduce || seen) {
+    let seen = false, viaTransition = false;
+    try {
+      seen = !!sessionStorage.getItem("introSeen"); sessionStorage.setItem("introSeen", "1");
+      // Arriving via the branded page transition forces the curtain to play even mid-session
+      viaTransition = sessionStorage.getItem("pageTransition") === "1";
+      if (viaTransition) sessionStorage.removeItem("pageTransition");
+    } catch (e) {}
+    if (reduce || (seen && !viaTransition)) {
       curtain.classList.add("is-done"); // no theatre on repeat visits / reduced motion
+      if (lenis) lenis.start();
     } else {
+      if (lenis) lenis.stop();                                 // lock scroll under the curtain
       window.addEventListener("load", () => setTimeout(dismiss, 1400));
       setTimeout(dismiss, 2600); // safety if load is slow
     }
+  } else if (lenis) {
+    lenis.start();
   }
 
   /* ---------- Hero cinematic entrance ---------- */
