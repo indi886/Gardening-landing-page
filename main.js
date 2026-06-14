@@ -84,12 +84,6 @@
       lenis.scrollTo(target, { offset: navEl ? -(navEl.offsetHeight + 8) : 0 });
     });
 
-    // Tasteful velocity skew on the page content (settles to 0 as velocity drops)
-    if (gsap) {
-      const skewTo = gsap.quickTo("#main", "skewY", { duration: 0.35, ease: "power3" });
-      lenis.on("scroll", ({ velocity }) => skewTo(Math.max(-1.4, Math.min(1.4, velocity * 0.05))));
-    }
-
     // Realign ScrollTrigger positions once images/fonts settle
     window.addEventListener("load", () => { if (window.ScrollTrigger) window.ScrollTrigger.refresh(); });
 

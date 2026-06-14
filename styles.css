@@ -1195,7 +1195,10 @@ html.has-custom-cursor :where(input, textarea, select, [contenteditable]) { curs
    ========================================================= */
 .reveal-section .kt-on, .reveal-section.is-in .kt-on { opacity: 1 !important; transform: none !important; }
 .kt-on.wipe { clip-path: none !important; -webkit-clip-path: none !important; transition: none !important; }
-.kt-on .ts-word { display: inline-block; overflow: hidden; vertical-align: top; }
+/* Mask each word for the rise-in reveal. Pad the bottom (and pull it back with
+   a negative margin) so letter descenders (g, y, p, j) aren't clipped by the
+   overflow on tight-leading display headings. */
+.kt-on .ts-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.16em; margin-bottom: -0.16em; }
 .kt-on .ts-char { display: inline-block; will-change: transform; }
 
 /* Native cross-document view transitions where supported (progressive) */
