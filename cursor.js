@@ -59,12 +59,13 @@
   };
   document.addEventListener("pointerover", (e) => {
     const t = e.target;
-    if (t.closest && (t.closest("input") || t.closest("textarea") || t.closest("[contenteditable]"))) {
-      setState("is-hidden"); return;
-    }
-    if (t.closest && t.closest(".shot")) { setState("is-view", "View"); return; }
-    if (t.closest && t.closest(".ba")) { setState("is-drag", "Drag"); return; }
-    if (t.closest && t.closest(GROW)) { setState("is-grow"); return; }
+    if (!t.closest) { setState(null); return; }
+    // Contextual targets first — the before/after slider IS an <input>, so it
+    // must be matched before the generic input check or "Drag" never shows.
+    if (t.closest(".shot")) { setState("is-view", "View"); return; }
+    if (t.closest(".ba")) { setState("is-drag", "Drag"); return; }
+    if (t.closest("input, textarea, [contenteditable], select")) { setState("is-hidden"); return; }
+    if (t.closest(GROW)) { setState("is-grow"); return; }
     setState(null);
   });
 })();

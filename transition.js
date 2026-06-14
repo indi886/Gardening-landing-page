@@ -45,6 +45,9 @@
       else sessionStorage.removeItem("transitionHash");
     } catch (e) {}
     const c = getOverlay();
+    // Start collapsed (the reused #introCurtain's resting clip is fully
+    // covering, which would flash-cover before the drop) then play the drop.
+    c.style.clipPath = c.style.webkitClipPath = "inset(0 0 100% 0)";
     void c.offsetWidth;                              // commit the collapsed start state
     c.classList.add("is-covering");
     let went = false;

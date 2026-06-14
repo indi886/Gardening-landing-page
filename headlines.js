@@ -52,6 +52,7 @@
   ];
 
   const seen = new Set();
+  const built = []; // { heading, chars } for the safety net below
   SELECTORS.forEach((sel) => {
     document.querySelectorAll(sel).forEach((heading) => {
       if (seen.has(heading)) return; // a heading may match more than one selector
@@ -59,6 +60,7 @@
       heading.classList.add("kt-on"); // neutralizes the inherited CSS reveal/wipe (see styles.css)
       const chars = splitHeading(heading);
       if (!chars.length) return;
+      built.push({ heading, chars });
 
       gsap.set(chars, { yPercent: 110, opacity: 0 });
       ST.create({
@@ -77,4 +79,17 @@
   });
 
   ST.refresh();
+
+  /* Safety net: if a heading is in view but its chars never got revealed
+     (e.g. ScrollTrigger mis-measured during the curtain/font load), show
+     them so text can never be left permanently invisible. */
+  window.addEventListener("load", () => setTimeout(() => {
+    built.forEach(({ heading, chars }) => {
+      const r = heading.getBoundingClientRect();
+      const inView = r.top < window.innerHeight && r.bottom > 0;
+      if (inView && gsap.getProperty(chars[0], "opacity") < 0.05) {
+        gsap.to(chars, { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out", stagger: 0.015 });
+      }
+    });
+  }, 1800));
 })();

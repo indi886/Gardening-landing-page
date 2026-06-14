@@ -46,7 +46,7 @@
     if (!scrollTicking) { scrollTicking = true; requestAnimationFrame(runScrollFns); }
   }, { passive: true });
 
-  /* ---------- Lenis smooth inertia scroll + velocity FX ----------
+  /* ---------- Lenis smooth inertia scroll ----------
      Lenis drives the REAL document scroll position, so the dispatcher above
      and every window.scrollY read keep working untouched. Disabled for
      reduced-motion (native scroll) and if the vendored lib is missing. */
@@ -89,6 +89,10 @@
 
     // The page-transition module (transition.js) asks us to halt inertia before leaving
     window.addEventListener("page:leaving", () => { if (lenis) lenis.stop(); });
+    // Restart on bfcache restore / Back — otherwise a stopped Lenis (from a
+    // page-leaving transition) would leave the restored page unscrollable.
+    // Only on persisted restores: a fresh load's start is owned by the curtain.
+    window.addEventListener("pageshow", (e) => { if (e.persisted && lenis) lenis.start(); });
   }
 
   /* ---------- Page-load brand curtain (once per session) ---------- */

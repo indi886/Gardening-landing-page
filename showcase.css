@@ -210,5 +210,30 @@ a { color: inherit; }
 .curtain__sub { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3em;
   text-transform: uppercase; color: var(--accent-soft); }
 
+/* =========================================================
+   CUSTOM CURSOR (cursor.js) — showcase loads only this stylesheet,
+   so the cursor rules must live here too (mirror of styles.css).
+   ========================================================= */
+.cursor { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+  mix-blend-mode: difference; opacity: 0; transition: opacity 0.3s var(--ease); }
+.cursor.is-active { opacity: 1; }
+.cursor__ring, .cursor__dot { position: fixed; top: 0; left: 0; }
+.cursor__ring { width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 1.5px solid #fff;
+  border-radius: 50%; transition: scale 0.28s var(--ease), background 0.28s var(--ease), border-color 0.28s var(--ease); }
+.cursor__dot { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: #fff; border-radius: 50%;
+  transition: opacity 0.2s var(--ease); }
+.cursor__label { position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-weight: 600; font-size: 9px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity 0.2s var(--ease); }
+.cursor.is-grow .cursor__ring { scale: 1.5; }
+.cursor.is-grow .cursor__dot { opacity: 0; }
+.cursor.is-view .cursor__ring, .cursor.is-drag .cursor__ring { scale: 1.9; background: rgba(255,255,255,0.14); }
+.cursor.is-view .cursor__dot, .cursor.is-drag .cursor__dot { opacity: 0; }
+.cursor.is-hidden { opacity: 0; }
+html.has-custom-cursor, html.has-custom-cursor * { cursor: none !important; }
+html.has-custom-cursor :where(input, textarea, select, [contenteditable]) { cursor: auto !important; }
+@media (pointer: coarse) { .cursor { display: none; } }
+@media (prefers-reduced-motion: reduce) { .cursor { display: none !important; } }
+
 /* Native cross-document view transitions where supported (progressive) */
 @view-transition { navigation: auto; }
