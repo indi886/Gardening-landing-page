@@ -161,9 +161,18 @@
     if (vid) {
       // Best case: browser autoplays immediately
       vid.addEventListener("play", fireOnce, { once: true });
-      // Fade video in once frames are available
-      const showVideo = () => vid.classList.add("is-ready");
+      // Fade the video in — and the poster photo out — once frames are
+      // available. Without this the photo (same z-index, painted later) sits
+      // on top of the video forever, so the hero looks static.
+      const heroPhoto = document.getElementById("heroPhoto");
+      const showVideo = () => {
+        vid.classList.add("is-ready");
+        if (heroPhoto) heroPhoto.classList.add("is-hidden");
+      };
       if (vid.readyState >= 2) { showVideo(); } else { vid.addEventListener("loadeddata", showVideo, { once: true }); }
+      // The clip plays once. When it ends, freeze the slow Ken Burns drift in
+      // place so the final frame sits completely still (no lingering zoom/pan).
+      vid.addEventListener("ended", () => vid.classList.add("is-still"), { once: true });
       // Nudge autoplay; ignore silent block
       const p = vid.play(); if (p) p.catch(() => {});
       // Fallback: if play event hasn't fired in 900 ms, start sequence anyway
@@ -172,6 +181,31 @@
       setTimeout(fireOnce, 400);
     }
   });
+
+  /* ---------- Hero video: play once, replay on return (no loop) ----------
+     The clip is short and intentionally not looped. To keep the hero feeling
+     alive, replay it from the start whenever it scrolls back into view — but
+     only if it has already finished, so an in-progress play is never cut off. */
+  (function heroVideoReplay() {
+    const vid = document.getElementById("heroVideo");
+    if (!vid || reduce) return;
+    const heroSection = vid.closest(".hero") || vid.parentElement;
+    let wasOut = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          if (wasOut && (vid.ended || vid.paused)) {
+            try { vid.currentTime = 0; } catch (_) {}
+            const p = vid.play(); if (p) p.catch(() => {});
+          }
+          wasOut = false;
+        } else {
+          wasOut = true;
+        }
+      });
+    }, { threshold: 0.25 });
+    io.observe(heroSection);
+  })();
 
   /* ---------- Nav scrolled state + scroll progress ---------- */
   const nav = $("#nav");
@@ -722,6 +756,75 @@
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
+    });
+  }
+
+  /* ---------- FAQ — smooth open with a delayed, animated answer ----------
+     Keeps the native <details> for semantics/accessibility, but takes over the
+     toggle so the panel expands smoothly and the answer fades/slides in a beat
+     later (rather than snapping open). Falls back to native + CSS faqIn when
+     GSAP is missing or reduced-motion is on. */
+  const faq = $(".faq");
+  if (faq && !reduce && window.gsap) {
+    const gsap = window.gsap;
+    faq.classList.add("faq--js"); // disables the CSS auto-fade; GSAP owns it now
+    $$(".faq__item", faq).forEach((item) => {
+      const summary = $("summary", item);
+      const answer = $("p", item);
+      if (!summary || !answer) return;
+
+      summary.addEventListener("click", (e) => {
+        e.preventDefault();            // we drive open/close ourselves
+        gsap.killTweensOf(answer);
+
+        if (item.open) {
+          // CLOSE: fade the answer out, then collapse the panel
+          item.classList.add("is-closing"); // flips the marker back immediately
+          gsap.set(answer, { overflow: "hidden", boxSizing: "border-box" });
+          const full = answer.offsetHeight;
+          gsap.set(answer, { height: full });
+          gsap.timeline({
+            onComplete: () => {
+              item.open = false;
+              item.classList.remove("is-closing");
+              gsap.set(answer, { clearProps: "all" });
+            },
+          })
+            .to(answer, { opacity: 0, y: 6, duration: 0.18, ease: "power2.in" })
+            .to(answer, { height: 0, duration: 0.3, ease: "power3.inOut" }, "-=0.02");
+        } else {
+          // OPEN: expand the (empty) panel, then reveal the answer a beat later
+          item.open = true;                  // marker rotates via [open]; content displays
+          gsap.set(answer, { overflow: "hidden", boxSizing: "border-box", height: "auto" });
+          const full = answer.offsetHeight;
+          gsap.set(answer, { height: 0, opacity: 0, y: 10 });
+          gsap.timeline({
+            onComplete: () => gsap.set(answer, { clearProps: "height,overflow,opacity,transform,boxSizing" }),
+          })
+            .to(answer, { height: full, duration: 0.72, ease: "power3.out" })
+            .to(answer, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.42); // longer pause before the answer arrives
+        }
+      });
+    });
+  }
+
+  /* ---------- Footer — columns rise & fade in as it scrolls into view ---------- */
+  const footer = $(".footer");
+  if (footer && !reduce && window.gsap && window.ScrollTrigger) {
+    const gsap = window.gsap, ST = window.ScrollTrigger;
+    gsap.registerPlugin(ST);
+    const cols = $$(".footer__brand, .footer__col", footer);
+    const bottom = $(".footer__bottom", footer);
+    gsap.set(cols, { y: 44, opacity: 0 });
+    if (bottom) gsap.set(bottom, { y: 24, opacity: 0 });
+    ST.create({
+      trigger: footer,
+      start: "top 88%",
+      once: true,
+      onEnter: () => {
+        gsap.to(cols, { y: 0, opacity: 1, duration: 1.15, ease: "power3.out", stagger: 0.2 });
+        if (bottom) gsap.to(bottom, { y: 0, opacity: 1, duration: 0.95, ease: "power3.out", delay: 0.7 });
+      },
     });
   }
 

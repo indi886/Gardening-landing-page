@@ -147,12 +147,9 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45; }
 .orb--1 { width: 46vw; height: 46vw; left: -12vw; top: -10vw;
   background: radial-gradient(circle, rgba(125,214,106,0.55), transparent 70%); animation: drift1 26s var(--ease) infinite; }
-.orb--2 { width: 40vw; height: 40vw; right: -14vw; top: 36vh;
-  background: radial-gradient(circle, rgba(251,231,166,0.6), transparent 70%); animation: drift2 32s var(--ease) infinite; }
 .orb--3 { width: 36vw; height: 36vw; left: 28vw; bottom: -16vw;
   background: radial-gradient(circle, rgba(58,143,58,0.3), transparent 70%); animation: drift1 30s var(--ease) infinite reverse; }
 @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(6vw,4vw)} }
-@keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-5vw,-4vw)} }
 /* Film grain — fixed full-screen, self-contained SVG noise, barely-there */
 .grain {
   position: fixed; inset: -20%; z-index: 90; pointer-events: none;
@@ -278,6 +275,23 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .nav__links a.is-active::after { width: 100%; }
 .nav__cta { --pad-y: 10px; --pad-x: 18px; }
 
+/* ---- Nav over the hero video (index, before scroll) ----
+   The dim sage links and dark wordmark wash out against the bright sky in the
+   hero video. Darken the strip with a soft top scrim and lift text to white;
+   once scrolled, the glass `.is-scrolled` state above takes back over. Scoped
+   to pages with the index `.hero` so About's light hero keeps its dark text. */
+body:has(.hero) .nav:not(.is-scrolled)::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(10, 24, 8, 0.5), rgba(10, 24, 8, 0));
+}
+body:has(.hero) .nav:not(.is-scrolled) .nav__links a { color: rgba(255, 255, 255, 0.9); }
+body:has(.hero) .nav:not(.is-scrolled) .nav__links a:hover,
+body:has(.hero) .nav:not(.is-scrolled) .nav__links a.is-active { color: #fff; }
+body:has(.hero) .nav:not(.is-scrolled) .brand__name { color: #fff; }
+body:has(.hero) .nav:not(.is-scrolled) .brand__sub { color: rgba(255, 255, 255, 0.82); }
+body:has(.hero) .nav:not(.is-scrolled) .brand__rail,
+body:has(.hero) .nav:not(.is-scrolled) .brand__picket { stroke: #fff; }
+
 /* Burger — hidden on desktop */
 .nav__burger {
   display: none; flex-direction: column; justify-content: center; gap: 6px;
@@ -331,6 +345,7 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   animation: kenburns 32s ease-in-out infinite alternate;
 }
 .hero__video.is-ready { opacity: 1; }
+.hero__video.is-still { animation-play-state: paused; } /* freeze Ken Burns when the clip ends */
 .hero__photo {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center; z-index: 0;
@@ -340,6 +355,7 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
   animation: kenburns 26s ease-in-out infinite alternate;
 }
 .hero__photo.is-missing { opacity: 0; } /* fall back to gradient if no file */
+.hero__photo.is-hidden  { opacity: 0; } /* poster fades out once the video is playing */
 @keyframes kenburns {
   0%   { transform: scale(1.06) translate(0, 0); }
   100% { transform: scale(1.2) translate(-2.5%, -2%); }
@@ -773,6 +789,16 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
    INTERACTIVE CTA
    ========================================================= */
 .cta { padding: var(--section-pad) clamp(20px, 5vw, 56px); max-width: 1100px; margin: 0 auto; }
+/* Scroll-bloom layer — owned solely by focal-cta.js (no transition, no :hover
+   rule) so it never collides with the pointer-follow #ctaGlow. Sits behind the
+   card content (z-index 1) and is clipped by .cta__card's overflow:hidden. */
+.cta__bloom {
+  position: absolute; left: 50%; top: 50%; z-index: 1; pointer-events: none;
+  width: 620px; height: 620px; border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow), transparent 65%);
+  filter: blur(50px); transform: translate(-50%, -50%); opacity: 0; will-change: opacity, transform;
+}
+@media (prefers-reduced-motion: reduce) { .cta__bloom { display: none; } }
 .cta__card {
   position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: clamp(40px, 7vw, 96px) clamp(28px, 6vw, 80px);
@@ -867,6 +893,12 @@ em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color
 .faq__item[open] .faq__marker { transform: rotate(45deg); background: var(--accent-deep); color: #fff; border-color: var(--accent-deep); }
 .faq__item p { padding: 0 24px 22px; color: var(--text-dim); max-width: 62ch; animation: faqIn .45s var(--ease); }
 @keyframes faqIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+/* When JS (main.js) enhances the FAQ, GSAP drives the reveal — drop the CSS
+   auto-fade, and flip the marker back the moment a panel starts closing. */
+.faq--js .faq__item p { animation: none; }
+.faq--js .faq__item.is-closing .faq__marker {
+  transform: rotate(0); background: var(--bg-2); color: var(--accent-deep); border-color: var(--border);
+}
 
 /* =========================================================
    FOOTER
