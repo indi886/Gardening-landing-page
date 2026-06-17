@@ -380,15 +380,13 @@
 
   <!-- ============ OUR WORK — IMAGE GALLERY ============ -->
   <section class="work reveal-section" id="gallery">
-    <div class="work__head">
-      <div>
+    <div class="orbit" id="workOrbit">
+      <div class="orbit__center">
         <p class="label"><span class="label__dot"></span> 05-E. OUR WORK</p>
         <h2 class="work__title">Inspired by nature,<br />designed <em>for you</em>.</h2>
+        <a href="showcase.html" class="btn btn--ghost orbit__cta">Enter the showcase →</a>
       </div>
-      <a href="showcase.html" class="btn btn--ghost">Enter the showcase →</a>
-    </div>
-
-    <div class="work__grid">
+      <div class="orbit__field work__grid" aria-label="Selected projects">
       <!-- Feature tile -->
       <figure class="shot shot--feature reveal-img" style="--d:0s"
         data-full="assets/tiered-planter-boxes.jpg" data-title="Tiered Planter Boxes" data-sub="Feature garden &amp; lighting" data-tag="Landscaping"
@@ -467,6 +465,7 @@
         </figcaption>
         <span class="shot__cta" aria-hidden="true">View project →</span>
       </figure>
+      </div>
     </div>
   </section>
 
@@ -670,6 +669,7 @@
   <script src="hero.js" defer></script>
   <script src="main.js" defer></script>
   <script src="cards.js" defer></script>
+  <script src="orbit.js" defer></script>
   <script src="headlines.js" defer></script>
   <script src="cursor.js" defer></script>
   <script src="transition.js" defer></script>
