@@ -416,6 +416,19 @@ body:has(.hero) .nav:not(.is-scrolled) .brand__picket { stroke: #fff; }
   to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
 }
 
+/* ---- Vapour-text takeover (vapour-text.js) ----
+   When the JS particle assemble is active it owns the reveal, so neutralize the
+   CSS cine-reveal / brand reveal to avoid double-animating. The module reveals
+   the real, crisp text via .vt-show once particles have settled. */
+.hero__title.vt .cine-line {
+  animation: none !important;
+  transform: none; filter: none; opacity: 0;
+}
+.cine-line.vt-show { opacity: 1; }
+.brand__word.vt-hide { opacity: 0; }
+.brand__word.vt-show { opacity: 1; }
+.vapor-canvas { position: absolute; pointer-events: none; z-index: 2; }
+
 .hero__lede {
   margin: 32px 0 0; max-width: 520px;
   color: rgba(255,255,255,0.82); font-weight: 400; font-size: clamp(15px, 1.5vw, 19px);
