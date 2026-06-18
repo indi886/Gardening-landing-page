@@ -64,7 +64,7 @@ a { color: inherit; }
 .ts-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--accent-soft); display: inline-block; }
 .ts-heading {
   font-family: var(--font-display); font-weight: 700; line-height: 0.98;
-  font-size: clamp(40px, 9vw, 132px); letter-spacing: -0.02em; margin: 0;
+  font-size: clamp(38px, 8.5vw, 124px); letter-spacing: -0.02em; margin: 0;
 }
 .ts-heading em { font-family: var(--font-serif); font-style: italic; font-weight: 600; color: var(--accent-soft); }
 .ts-sub {
@@ -79,7 +79,7 @@ a { color: inherit; }
 .ts-num {
   position: absolute; top: clamp(80px, 14vh, 150px); right: clamp(20px, 5vw, 80px);
   z-index: 2; font-family: var(--font-mono); font-weight: 600;
-  font-size: clamp(60px, 16vw, 200px); line-height: 1; color: rgba(255,255,255,0.10);
+  font-size: clamp(56px, 15vw, 188px); line-height: 1; color: rgba(255,255,255,0.10);
   letter-spacing: -0.04em; pointer-events: none;
 }
 
@@ -91,7 +91,7 @@ a { color: inherit; }
     linear-gradient(160deg, var(--accent-deep), #0c2c12 70%);
 }
 .ts-cover .ts-bg::after { background: none; }
-.ts-cover .ts-heading { font-size: clamp(48px, 12vw, 168px); }
+.ts-cover .ts-heading { font-size: clamp(45px, 11.3vw, 158px); }
 .ts-cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
 .ts-btn {
   display: inline-flex; align-items: center; gap: 8px;
