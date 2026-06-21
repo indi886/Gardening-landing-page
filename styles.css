@@ -1066,12 +1066,12 @@ body:has(.hero) .nav:not(.is-scrolled) .brand__picket { stroke: #fff; }
    owns the look, the centring anchor, and the easing of each phase.
    ========================================================= */
 .orbit {
-  --card-w: clamp(112px, 14vw, 142px);
-  --card-h: clamp(160px, 20vw, 200px);
+  --card-w: clamp(160px, 17vw, 210px);
+  --card-h: clamp(235px, 25vw, 305px);
   position: relative;
   width: 100%;
-  height: clamp(500px, 64vw, 620px);
-  margin: 0 auto clamp(56px, 8vw, 96px);
+  height: clamp(620px, 74vw, 780px);
+  margin: 0 auto clamp(40px, 6vw, 70px);
   isolation: isolate;
   overflow: visible;
 }
@@ -1154,12 +1154,28 @@ body:has(.hero) .nav:not(.is-scrolled) .brand__picket { stroke: #fff; }
   font-family: var(--font-display); font-size: 13.5px; font-weight: 700;
   color: var(--text); line-height: 1.16;
 }
-/* The orbiting cards read as a moodboard — keep them to photo, tag, index and
-   title; the sub-line and full detail live in the grid and lightbox below. */
 .scard__sub { display: none; }
 
+/* Fan deck — body overlays the photo with a dark gradient */
+.orbit--fan .scard__body {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(6,16,6,0.92) 0%, rgba(6,16,6,0) 100%);
+  border-top: none;
+  padding: 44px 14px 16px;
+  z-index: 2;
+}
+.orbit--fan .scard__num { color: rgba(255,255,255,0.48); }
+.orbit--fan .scard__title { color: #fff; font-size: 14.5px; }
+.orbit--fan .scard__sub { display: block; color: rgba(255,255,255,0.62); font-size: 10.5px; margin-top: 4px; }
+.orbit--fan .scard__photo { flex: 1; min-height: 0; }
+.orbit--fan .scard {
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 32px 80px rgba(6,16,6,0.36), 0 10px 28px rgba(6,16,6,0.20);
+}
+
 @media (max-width: 700px) {
-  .orbit { --card-w: clamp(96px, 27vw, 124px); --card-h: clamp(138px, 38vw, 176px); height: clamp(420px, 92vw, 540px); }
+  .orbit { --card-w: clamp(118px, 28vw, 148px); --card-h: clamp(172px, 40vw, 215px); height: clamp(500px, 100vw, 640px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1167,7 +1183,7 @@ body:has(.hero) .nav:not(.is-scrolled) .brand__picket { stroke: #fff; }
 }
 
 .work__grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 230px; gap: 18px;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 175px; gap: 16px;
 }
 .shot {
   position: relative; overflow: hidden; border-radius: var(--radius-lg);
