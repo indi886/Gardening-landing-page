@@ -53,11 +53,13 @@
   if (!reduce && window.Lenis) {
     const gsap = window.gsap, ST = window.ScrollTrigger;
     lenis = new Lenis({
-      duration: 1.05,                                          // refined, not floaty
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out
+      // Continuous lerp-based smoothing: every frame eases the real scroll
+      // toward the target, giving a buttery, uninterrupted glide (vs. the
+      // discrete duration-eased segments of duration mode).
+      lerp: 0.085,                                             // lower = smoother/more glide; 0.08–0.1 is the premium pocket
       smoothWheel: true,
       smoothTouch: false,                                      // keep native touch
-      lerp: 0.1,
+      wheelMultiplier: 0.95,                                   // a touch restrained per notch
     });
 
     // Canonical Lenis ↔ ScrollTrigger ↔ gsap.ticker wiring
@@ -310,158 +312,8 @@
     onParallax();
   }
 
-  /* ---------- Sticky storytelling — the growth journey ---------- */
-  const steps = $$(".story__step");
-  const stages = $$(".story__stage");
-  if (steps.length && stages.length) {
-    const counterEl = $("#storyCounter");
-    const nameEl = $("#storyStageName");
-    const setStage = (idx) => {
-      steps.forEach((s) => {
-        const i = +s.dataset.step;
-        s.classList.toggle("is-active", i === idx);
-        s.classList.toggle("is-done", i < idx);
-      });
-      stages.forEach((st) => st.classList.toggle("is-active", +st.dataset.stage === idx));
-      if (counterEl) {
-        const next = "0" + (idx + 1);
-        if (counterEl.textContent !== next) {
-          counterEl.textContent = next;
-          counterEl.classList.remove("is-tick");
-          void counterEl.offsetWidth; // restart tick animation
-          counterEl.classList.add("is-tick");
-        }
-      }
-      if (nameEl) nameEl.textContent = steps[idx]?.dataset.name || "";
-    };
-    /* ----- Portal Outpour: cards explode from the trigger into the grid ----- */
-    const storySection = $(".story");
-    const portal = $("#storyPortal");
-    const arcFill = $("#storyArc");
-    const ARC_LEN = 754; // 2π × r(120)
-    // spring curve with overshoot (CSS linear() ≈ spring(1, 170, 14)); back-out fallback
-    const SPRING =
-      "linear(0, 0.011 1.1%, 0.071 2.9%, 0.27 6.5%, 0.741 12.6%, 0.928 15.6%, 1.061 18.8%, " +
-      "1.12 21.6%, 1.143 24.4%, 1.137 27.6%, 1.061 35.8%, 1.015 41.6%, 0.988 48.5%, " +
-      "0.985 55.8%, 1.001 70.6%, 1.003 79.5%, 1)";
-    const FALLBACK = "cubic-bezier(0.34, 1.56, 0.64, 1)";
-    const supportsLinear = CSS.supports("transition-timing-function", "linear(0, 1)");
-    const EASING = supportsLinear ? SPRING : FALLBACK;
-
-    if (storySection && portal) {
-      storySection.classList.add("is-portal");
-
-      const pour = () => {
-        if (storySection.classList.contains("is-poured")) return;
-        portal.setAttribute("aria-expanded", "true");
-        // origin = the trigger's center at click time (before it leaves the flow)
-        const pr = portal.getBoundingClientRect();
-        const ox = pr.left + pr.width / 2;
-        const oy = pr.top + pr.height / 2;
-        portal.classList.add("is-fired");
-        storySection.classList.add("is-collapsed"); // grid snaps to final layout now
-        void storySection.offsetWidth;
-        const cards = steps.map((s) => $(".story__card", s));
-
-        // rank by distance from the portal → the outpour wave
-        const ranked = cards
-          .map((card) => {
-            const r = card.getBoundingClientRect();
-            const dx = ox - (r.left + r.width / 2);
-            const dy = oy - (r.top + r.height / 2);
-            return { card, dx, dy, dist: Math.hypot(dx, dy) };
-          })
-          .sort((a, b) => a.dist - b.dist);
-
-        ranked.forEach(({ card, dx, dy }, rank) => {
-          // place at the portal's center, scaled to nothing — no transition yet
-          card.style.transition = "none";
-          card.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(0.001)`;
-          card.style.opacity = "0";
-          card.parentElement.classList.add("is-seen"); // arms the content cascade
-          void card.offsetWidth; // commit start state
-
-          const delay = 140 + rank * 45; // ~45ms wave, after the trigger implodes
-          card.style.transition =
-            `transform 1s ${EASING} ${delay}ms, opacity .4s ease-out ${delay}ms`;
-          card.style.transform = "translate(0, 0) scale(1)";
-          card.style.opacity = "1";
-
-          card.addEventListener("transitionend", function clean(e) {
-            if (e.propertyName !== "transform") return;
-            // hand control back to the CSS state machine (tilt, active, dim)
-            card.style.transition = "";
-            card.style.transform = "";
-            card.style.opacity = "";
-            card.removeEventListener("transitionend", clean);
-          });
-        });
-
-        // progress arc sweeps full as the wave lands; counter ticks to 01
-        if (arcFill) {
-          arcFill.style.transition = `stroke-dashoffset 1.3s ${EASING} .2s`;
-          arcFill.style.strokeDashoffset = "0";
-        }
-        setTimeout(() => {
-          storySection.classList.add("is-poured");
-          setStage(0);
-        }, 140 + ranked.length * 45 + 600);
-      };
-
-      portal.addEventListener("click", pour);
-
-      if (reduce) {
-        // no portal theatre: everything rendered, complete
-        storySection.classList.add("is-poured");
-        steps.forEach((s) => s.classList.add("is-seen"));
-        if (arcFill) arcFill.style.strokeDashoffset = "0";
-        setStage(0);
-      } else {
-        // courtesy auto-pour if the visitor scrolls past without clicking
-        const autoPour = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (!e.isIntersecting) return;
-              setTimeout(() => {
-                if (!storySection.classList.contains("is-poured")) pour();
-              }, 2600);
-              autoPour.unobserve(e.target);
-            });
-          },
-          { threshold: 0.6 }
-        );
-        autoPour.observe(portal);
-      }
-    }
-
-    /* hovering a card focuses its stage (visual, counter, name) */
-    steps.forEach((s) => {
-      s.addEventListener("pointerenter", () => {
-        if (storySection?.classList.contains("is-poured")) setStage(+s.dataset.step);
-      });
-    });
-    setStage(0);
-
-    /* Micro-interactions: pointer-tracked spotlight + gentle 3D tilt
-       (the ghost number counter-drifts off the same --rx/--ry vars) */
-    if (!reduce && window.matchMedia("(pointer: fine)").matches) {
-      $$(".story__card").forEach((card) => {
-        card.addEventListener("pointermove", (e) => {
-          const r = card.getBoundingClientRect();
-          const px = (e.clientX - r.left) / r.width;
-          const py = (e.clientY - r.top) / r.height;
-          card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
-          card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
-          card.style.setProperty("--rx", ((py - 0.5) * -3.2).toFixed(2) + "deg");
-          card.style.setProperty("--ry", ((px - 0.5) * 3.2).toFixed(2) + "deg");
-        });
-        card.addEventListener("pointerleave", () => {
-          card.style.setProperty("--rx", "0deg");
-          card.style.setProperty("--ry", "0deg");
-        });
-      });
-    }
-  }
+  /* ---------- How we work — cinematic horizontal pan ----------
+     Moved to process.js (GSAP ScrollTrigger pinned horizontal reel). */
 
   /* ---------- Animated statistics ---------- */
   const easeOut = (x) => 1 - Math.pow(1 - x, 3);
